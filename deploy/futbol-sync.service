@@ -1,0 +1,8 @@
+[Unit]
+Description=Sync BSD -> Postgres (Futbol Argentina)
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/futbol-argentina
+EnvironmentFile=%h/futbol-argentina/.env
+ExecStart=/usr/bin/flock -n /tmp/futbol-sync.lock %h/futbol-argentina/.venv/bin/python -m sync.sync_bsd --resync-days 1 --max-matches 60

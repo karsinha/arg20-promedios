@@ -47,7 +47,7 @@
       </span>
 
 
-      <i>
+      <i class="{{ 'vivo' if p.estado == 'en_juego' }}">
 
         {% if p.estado in ('finalizado', 'en_juego')
               and p.goles_local is not none %}
@@ -87,3 +87,8 @@
   {% endfor %}
 
 </div>
+
+{% if hay_vivo %}
+  <div hx-get="/torneo/fixture?modo={{ modo }}&fecha={{ fecha }}"
+       hx-trigger="every 30s" hx-target="#fixture"></div>
+{% endif %}

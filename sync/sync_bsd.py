@@ -31,8 +31,9 @@ SEASON_2026 = 1635
 HIST = {2024: [1638], 2025: [1637, 1636]}   # anio -> season_ids de BSD
 CORTE_APERTURA = "2026-06-15"               # event_date < corte => Apertura, si no Clausura
 PLAYOFF_STAGES = {"round-of-16", "quarterfinals", "semifinals", "final"}
-ESTADOS = {"finished": "finalizado", "notstarted": "programado", "postponed": "postergado"}
-
+ESTADOS = {"finished": "finalizado", "notstarted": "programado", "postponed": "postergado",
+           "inprogress": "en_juego", "suspended": "suspendido", "abandoned": "suspendido"}
+MAX_INTENTOS_STATS = 8   # con un sync cada 4 h son ~32 h de margen para que BSD cargue las stats
 log = logging.getLogger("sync")
 S = requests.Session()
 
@@ -180,16 +181,16 @@ def sync_equipos_y_partidos(cur, torneos, events):
 
 
 def partidos_pendientes_de_stats(cur, resync_days, max_matches):
-    """Finalizados sin stats, mas los terminados en los ultimos N dias si se pidio resync."""
+    """Finalizados sin stats (con tope de intentos), mas los terminados en los ultimos N dias si se pidio resync."""
     desde = datetime.now(timezone.utc) - timedelta(days=resync_days)
     cur.execute(
         """SELECT p.id, p.ext_id, p.goles_local, p.goles_visitante, p.local_id, p.visitante_id
            FROM partido p
            WHERE p.estado = 'finalizado'
-             AND (NOT EXISTS (SELECT 1 FROM estadistica_jugador s WHERE s.partido_id = p.id)
+             AND ((NOT p.stats_ok AND p.stats_intentos < %s)
                   OR (%s > 0 AND p.fecha_hora >= %s))
            ORDER BY p.fecha_hora""",
-        (resync_days, desde),
+        (MAX_INTENTOS_STATS, resync_days, desde),
     )
     filas = cur.fetchall()
     return filas[:max_matches] if max_matches else filas
@@ -223,7 +224,10 @@ def sync_stats(conn, cur, eq, resync_days, max_matches):
     en_contra = 0
     for i, (pid, pext, gl, gv, local_id, visit_id) in enumerate(pend, 1):
         ps = (get(f"/events/{pext}/player-stats/") or {}).get("player_stats")
-        if ps is None:
+        if not ps:      # None (error/404) o lista vacia: contar el intento y no tocar lo que ya hubiera
+            cur.execute("UPDATE partido SET stats_intentos = stats_intentos + 1 WHERE id = %s", (pid,))
+            cur.execute("UPDATE partido SET stats_ok = true WHERE id = %s", (pid,))
+            conn.commit()
             log.warning("sin player-stats para partido %s", pext)
             continue
         goles = defaultdict(int)
@@ -265,16 +269,18 @@ def sync_stats(conn, cur, eq, resync_days, max_matches):
 
 
 def standings_rows(st):
-    if not st:
+    """Filas de equipo (team_id + pts) esten donde esten en la respuesta."""
+    def rec(o, prof=0):
+        if prof > 6:
+            return []
+        if isinstance(o, dict):
+            if o.get("team_id") is not None and o.get("pts") is not None:
+                return [o]
+            return [r for v in o.values() for r in rec(v, prof + 1)]
+        if isinstance(o, list):
+            return [r for v in o for r in rec(v, prof + 1)]
         return []
-    rows = st.get("standings")
-    if rows:
-        return rows
-    out = []
-    for v in (st.get("zones") or st.get("groups") or {}).values():
-        if isinstance(v, list):
-            out += v
-    return out
+    return rec(st or {})
 
 
 def sync_historicos(cur, eq):

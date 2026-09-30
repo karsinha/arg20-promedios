@@ -1,0 +1,9 @@
+[Unit]
+Description=Sync BSD cada 4 horas
+
+[Timer]
+OnCalendar=*-*-* 0/4:05
+Persistent=true
+
+[Install]
+WantedBy=timers.target

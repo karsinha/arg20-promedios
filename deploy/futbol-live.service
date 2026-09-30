@@ -1,0 +1,12 @@
+[Unit]
+Description=Live BSD -> Postgres (Futbol Argentina)
+
+[Service]
+WorkingDirectory=%h/futbol-argentina
+EnvironmentFile=%h/futbol-argentina/.env
+ExecStart=%h/futbol-argentina/.venv/bin/python -m sync.live --cada 30
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

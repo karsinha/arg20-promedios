@@ -62,6 +62,8 @@ CREATE TABLE partido (
   goles_visitante  INT,
   estado           estado_partido NOT NULL DEFAULT 'programado',
   reprogramado     BOOLEAN NOT NULL DEFAULT false,   -- true = original postergado que ya tiene un reemplazo con otro id
+  stats_ok         BOOLEAN NOT NULL DEFAULT false,   -- player-stats bajadas con datos
+  stats_intentos   INT NOT NULL DEFAULT 0,           -- intentos sin datos (tope en sync_bsd.py)
   actualizado_en   TIMESTAMPTZ NOT NULL DEFAULT now(),
   CHECK (local_id <> visitante_id)
 );

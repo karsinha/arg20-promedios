@@ -9,14 +9,15 @@ router = APIRouter(prefix="/torneo")
 def contexto_fixture(ctx: modos.Contexto, fecha: int | None = None) -> dict:
     todas = queries.fechas(ctx.torneo_id)
     if not todas:
-        return {"fecha": None, "prev": None, "next": None, "partidos": []}
+        return {"fecha": None, "prev": None, "next": None, "partidos": [], "hay_vivo": False}
     if fecha not in todas:
         fecha = queries.fecha_inicial(ctx.torneo_id)
     if fecha not in todas:
         fecha = todas[0]
     i = todas.index(fecha)
+    partidos = queries.partidos(ctx.torneo_id, fecha)
     return {"fecha": fecha, "prev": todas[i - 1], "next": todas[(i + 1) % len(todas)],
-            "partidos": queries.partidos(ctx.torneo_id, fecha)}
+            "partidos": partidos, "hay_vivo": any(p["estado"] == "en_juego" for p in partidos)}
 
 
 def agrupar_por_zona(filas: list[dict]) -> list[tuple]:

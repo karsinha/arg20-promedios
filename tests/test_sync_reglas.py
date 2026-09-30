@@ -28,3 +28,18 @@ def test_postergado_con_reemplazo_se_marca_reprogramado():
 
 def test_postergado_sin_reemplazo_no_se_marca():
     assert sync_bsd.marcar_reprogramados([ev(id=5, status="postponed")]) == set()
+
+
+def test_standings_rows_encuentra_filas_anidadas():
+    plana = {"standings": [{"team_id": 1, "played": 3, "pts": 5}]}
+    por_zona = {"zones": [{"key": "playoff"}],
+                "standings": {"A": [{"team_id": 2, "played": 1, "pts": 1}],
+                              "B": [{"team_id": 3, "played": 2, "pts": 4}]}}
+    assert [r["team_id"] for r in sync_bsd.standings_rows(plana)] == [1]
+    assert sorted(r["team_id"] for r in sync_bsd.standings_rows(por_zona)) == [2, 3]
+    assert sync_bsd.standings_rows(None) == []
+
+
+def test_estado_en_vivo_y_suspendido():
+    assert sync_bsd.estado(ev(status="inprogress")) == "en_juego"
+    assert sync_bsd.estado(ev(status="abandoned")) == "suspendido"
