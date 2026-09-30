@@ -1,0 +1,90 @@
+<div class="section-head players-head">
+
+  <div>
+    <span class="eyebrow">ESTADÍSTICAS</span>
+    <h2>Jugadores</h2>
+  </div>
+
+</div>
+
+
+<div class="tabs player-tabs">
+
+  {% for t, et in [
+    ('goles', 'Goleadores'),
+    ('asistencias', 'Asistidores')
+  ] %}
+
+    <button
+      class="{{ 'on' if t == tipo }}"
+      hx-get="/jugadores?modo={{ modo }}&tipo={{ t }}"
+      hx-target="#jugadores"
+    >
+      {{ et }}
+    </button>
+
+  {% endfor %}
+
+</div>
+
+
+<div class="ov">
+
+  <table class="players-table">
+
+    <thead>
+
+      <tr>
+        <th class="pos">#</th>
+        <th class="team-head">Jugador</th>
+        <th class="team-head">Equipo</th>
+        <th class="stat-value-head">
+          {{ 'Goles' if tipo == 'goles' else 'Asist.' }}
+        </th>
+      </tr>
+
+    </thead>
+
+
+    <tbody>
+
+      {% for f in filas_jugadores %}
+
+        <tr>
+
+          <td class="pos rank">
+            {{ f.pos }}
+          </td>
+
+          <td class="t player-name">
+            {{ f.jugador }}
+          </td>
+
+          <td class="t team-name">
+            {{ f.equipo }}
+          </td>
+
+          <td class="stat-value">
+            {{ f[tipo] }}
+          </td>
+
+        </tr>
+
+      {% else %}
+
+        <tr>
+          <td
+            colspan="4"
+            class="vacio"
+          >
+            Sin datos todavía.
+          </td>
+        </tr>
+
+      {% endfor %}
+
+    </tbody>
+
+  </table>
+
+</div>

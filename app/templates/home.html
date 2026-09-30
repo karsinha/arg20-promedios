@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<header class="hero">
+  <div class="brand">
+    <span class="brand-dot"></span>
+    FÚTBOL ARGENTINA
+  </div>
+
+  <h1>
+    Liga Profesional
+    <span>{{ anio }}</span>
+  </h1>
+
+  <p class="hero-sub">
+    Resultados, posiciones y estadísticas
+  </p>
+</header>
+
+<div id="main">
+  {% include "partials/main.html" %}
+</div>
+
+{% endblock %}

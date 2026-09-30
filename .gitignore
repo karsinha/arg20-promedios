@@ -2,3 +2,6 @@
 .venv/
 venv/
 bsd_dump/
+__pycache__/
+*.pyc
+.pytest_cache/

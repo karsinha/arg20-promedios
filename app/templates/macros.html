@@ -1,0 +1,71 @@
+{% macro escudo(nombre, abrev) -%}
+
+<span class="tm">
+  <span class="cr">{{ abrev }}</span>
+  <span>{{ nombre }}</span>
+</span>
+
+{%- endmacro %}
+
+
+{% macro tabla_posiciones(filas) %}
+
+<div class="ov">
+
+  <table class="standings-table">
+
+    <thead>
+
+      <tr>
+        <th class="pos">#</th>
+        <th class="team-head">Equipo</th>
+        <th>PJ</th>
+        <th>PG</th>
+        <th>PE</th>
+        <th>PP</th>
+        <th>GF</th>
+        <th>GC</th>
+        <th>DG</th>
+        <th class="points-head">PTS</th>
+      </tr>
+
+    </thead>
+
+
+    <tbody>
+
+      {% for f in filas %}
+
+        <tr>
+
+          <td class="pos rank">
+            {{ loop.index }}
+          </td>
+
+          <td class="t team-cell">
+            {{ escudo(f.equipo, f.abrev) }}
+          </td>
+
+          <td>{{ f.pj }}</td>
+          <td>{{ f.pg }}</td>
+          <td>{{ f.pe }}</td>
+          <td>{{ f.pp }}</td>
+          <td>{{ f.gf }}</td>
+          <td>{{ f.gc }}</td>
+          <td>{{ f.dg }}</td>
+
+          <td class="points">
+            {{ f.pts }}
+          </td>
+
+        </tr>
+
+      {% endfor %}
+
+    </tbody>
+
+  </table>
+
+</div>
+
+{% endmacro %}

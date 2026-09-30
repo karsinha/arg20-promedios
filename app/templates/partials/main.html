@@ -1,0 +1,150 @@
+{% from "macros.html" import tabla_posiciones, escudo %}
+
+<div class="main-toolbar">
+  <div class="tabs">
+    {% for m, et in etiquetas.items() %}
+      <button
+        class="{{ 'on' if m == modo }}"
+        hx-get="/modo/{{ m }}"
+        hx-target="#main"
+        hx-push-url="/?modo={{ m }}"
+      >
+        {{ et }}
+      </button>
+    {% endfor %}
+  </div>
+</div>
+
+
+<div class="grid">
+
+  <!-- =========================================
+       IZQUIERDA — TABLA
+       ========================================= -->
+  <section class="column-left">
+
+    <div class="card standings-card">
+
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">CLASIFICACIÓN</span>
+          <h2>Tabla · {{ etiqueta }}</h2>
+        </div>
+      </div>
+
+
+      {% if modo in ('clausura', 'apertura') %}
+
+        {% for zona, filas in zonas %}
+
+          <h3 class="zona">
+            {{ 'Zona ' ~ zona if zona else 'Sin zona' }}
+          </h3>
+
+          {{ tabla_posiciones(filas) }}
+
+        {% else %}
+
+          <p class="vacio">
+            Todavía no hay partidos jugados en este torneo.
+          </p>
+
+        {% endfor %}
+
+
+      {% elif modo == 'anual' %}
+
+        {% if filas %}
+
+          {{ tabla_posiciones(filas) }}
+
+        {% else %}
+
+          <p class="vacio">
+            Todavía no hay partidos jugados este año.
+          </p>
+
+        {% endif %}
+
+
+      {% else %}
+
+        <div class="ov">
+
+          <table class="standings-table promedio-table">
+
+            <thead>
+              <tr>
+                <th class="pos">Pos</th>
+                <th class="team-head">Equipo</th>
+                <th>2024</th>
+                <th>2025</th>
+                <th>2026</th>
+                <th>PJ</th>
+                <th class="points-head">Prom</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {% for f in filas %}
+
+                <tr>
+
+                  <td class="pos rank">
+                    {{ loop.index }}
+                  </td>
+
+                  <td class="t team-cell">
+                    {{ escudo(f.equipo, f.abrev) }}
+                  </td>
+
+                  <td>{{ f.pts_2024 }}</td>
+                  <td>{{ f.pts_2025 }}</td>
+                  <td>{{ f.pts_2026 }}</td>
+                  <td>{{ f.pj }}</td>
+
+                  <td class="points">
+                    {{ '%.3f'|format(f.promedio) }}
+                  </td>
+
+                </tr>
+
+              {% endfor %}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      {% endif %}
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       DERECHA — FIXTURE + JUGADORES
+       ========================================= -->
+  <section class="column-right">
+
+    <div
+      class="card fixture-card"
+      id="fixture"
+    >
+      {% include "partials/fixture.html" %}
+    </div>
+
+
+    <div
+      class="card players-card"
+      id="jugadores"
+    >
+      {% include "partials/jugadores.html" %}
+    </div>
+
+  </section>
+
+</div>

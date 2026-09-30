@@ -1,0 +1,859 @@
+:root {
+  --bg: #eef1f5;
+  --card: #ffffff;
+  --card-soft: #f8fafc;
+
+  --line: #dfe4eb;
+  --line-soft: #e9edf2;
+
+  --tx: #171a1f;
+  --mut: #687280;
+  --mut-2: #919aa6;
+
+  /* Acentos */
+  --green: #08a66d;
+  --green-soft: #ebf8f2;
+  --green-line: #c9ecdc;
+
+  --blue: #3978d4;
+  --blue-soft: #eef4fd;
+  --blue-line: #d5e2f6;
+
+  --violet: #7658c7;
+  --violet-soft: #f3effc;
+  --violet-line: #e2daf5;
+
+  --radius: 13px;
+  --radius-sm: 8px;
+
+  --shadow:
+    0 2px 8px rgba(20, 30, 45, 0.035),
+    0 10px 28px rgba(20, 30, 45, 0.035);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+
+  background:
+    radial-gradient(
+      circle at 50% -10%,
+      #f8fafc 0%,
+      var(--bg) 42%,
+      #e9edf2 100%
+    );
+
+  color: var(--tx);
+
+  font-family:
+    "Manrope",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 15px;
+  line-height: 1.45;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+
+.wrap {
+  width: min(1260px, calc(100% - 48px));
+
+  margin: 0 auto;
+
+  padding-top: 18px;
+  padding-bottom: 50px;
+}
+
+.main-toolbar {
+  margin-bottom: 12px;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero {
+  text-align: center;
+  padding: 12px 0 24px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 11px;
+
+  color: var(--mut);
+
+  font-family: "JetBrains Mono", monospace;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: .1em;
+}
+
+.brand-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: var(--green);
+}
+
+h1 {
+  margin: 0;
+
+  font-size: clamp(32px, 4vw, 46px);
+
+  line-height: 1.08;
+
+  font-weight: 800;
+
+  letter-spacing: -.045em;
+}
+
+h1 span {
+  color: var(--green);
+}
+
+.hero-sub {
+  margin: 8px 0 0;
+
+  color: var(--mut);
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   TOP TABS
+   ========================================================= */
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.tabs button {
+  cursor: pointer;
+
+  padding: 8px 13px;
+
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+
+  background: var(--card);
+  color: var(--mut);
+
+  font-family: "Manrope", sans-serif;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    color .15s ease,
+    transform .15s ease;
+}
+
+.tabs button:hover {
+  color: var(--tx);
+  border-color: #ccd2da;
+}
+
+.tabs button:active {
+  transform: translateY(1px);
+}
+
+.tabs button.on {
+  background: var(--green-soft);
+  border-color: var(--green-line);
+  color: var(--green);
+}
+
+
+/* =========================================================
+   MAIN GRID
+   ========================================================= */
+
+.grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.02fr)
+    minmax(0, .98fr);
+
+  gap: 16px;
+
+  align-items: start;
+}
+
+.column-left,
+.column-right {
+  min-width: 0;
+}
+
+.column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.card {
+  min-width: 0;
+
+  background: var(--card);
+
+  border: 1px solid var(--line);
+
+  border-radius: var(--radius);
+
+  box-shadow: var(--shadow);
+
+  padding: 17px;
+}
+
+
+/* =========================================================
+   SECTION HEADERS
+   ========================================================= */
+
+.section-head {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-bottom: 13px;
+
+  padding-bottom: 11px;
+
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.section-head h2 {
+  margin: 2px 0 0;
+
+  font-size: 17px;
+
+  font-weight: 800;
+
+  letter-spacing: -.025em;
+}
+
+.eyebrow {
+  display: block;
+
+  font-family: "JetBrains Mono", monospace;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  letter-spacing: .11em;
+}
+
+
+/*
+   Colores sutiles para diferenciar secciones
+*/
+
+.standings-card .section-head {
+  margin: -4px -4px 13px;
+
+  padding: 10px 11px 11px;
+
+  border-radius: 9px;
+
+  background: var(--green-soft);
+
+  border-bottom: 0;
+}
+
+.standings-card .eyebrow {
+  color: var(--green);
+}
+
+.fixture-card .section-head {
+  margin: -4px -4px 13px;
+
+  padding: 10px 11px 11px;
+
+  border-radius: 9px;
+
+  background: var(--blue-soft);
+
+  border-bottom: 0;
+}
+
+.fixture-card .eyebrow {
+  color: var(--blue);
+}
+
+.players-card .section-head {
+  margin: -4px -4px 11px;
+
+  padding: 10px 11px 11px;
+
+  border-radius: 9px;
+
+  background: var(--violet-soft);
+
+  border-bottom: 0;
+}
+
+.players-card .eyebrow {
+  color: var(--violet);
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+.ov {
+  width: 100%;
+
+  overflow-x: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cdd3db transparent;
+}
+
+
+/* =========================================================
+   STANDINGS TABLE
+   ========================================================= */
+
+.standings-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  table-layout: fixed;
+
+  font-family: "JetBrains Mono", monospace;
+
+  font-size: 11px;
+}
+
+.standings-table th,
+.standings-table td {
+  padding: 8px 5px;
+
+  border-bottom: 1px solid var(--line-soft);
+
+  white-space: nowrap;
+
+  text-align: center;
+}
+
+.standings-table th {
+  color: var(--mut-2);
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: .04em;
+}
+
+.standings-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.standings-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+
+/* columnas */
+
+.standings-table th:nth-child(1),
+.standings-table td:nth-child(1) {
+  width: 5%;
+}
+
+.standings-table th:nth-child(2),
+.standings-table td:nth-child(2) {
+  width: 40%;
+}
+
+.standings-table th:nth-child(n+3),
+.standings-table td:nth-child(n+3) {
+  width: 6.875%;
+}
+
+
+/* posición */
+
+.pos {
+  color: var(--mut-2);
+  font-weight: 500;
+}
+
+.rank {
+  color: var(--mut);
+}
+
+
+/* =========================================================
+   TEAM
+   ========================================================= */
+
+.team-head {
+  text-align: left !important;
+}
+
+.team-cell {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  text-align: left !important;
+}
+
+.tm {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  max-width: 100%;
+
+  font-family: "Manrope", sans-serif;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.tm > span:last-child {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+.cr {
+  display: inline-grid;
+
+  place-items: center;
+
+  width: 23px;
+  height: 23px;
+
+  flex: none;
+
+  border: 1px solid var(--line);
+
+  border-radius: 50%;
+
+  background: #f4f6f8;
+
+  color: var(--mut);
+
+  font-family: "JetBrains Mono", monospace;
+
+  font-size: 7px;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   POINTS
+   ========================================================= */
+
+.points-head {
+  color: var(--green) !important;
+}
+
+.points {
+  color: var(--green);
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   ZONE
+   ========================================================= */
+
+.zona {
+  margin: 16px 0 7px;
+
+  color: var(--mut-2);
+
+  font-family: "JetBrains Mono", monospace;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  letter-spacing: .11em;
+
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   FIXTURE
+   ========================================================= */
+
+.fixture-head {
+  min-height: 36px;
+}
+
+.fixture-list {
+  border-top: 1px solid transparent;
+}
+
+.m {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-height: 42px;
+
+  padding: 4px 0;
+
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.m:last-child {
+  border-bottom: 0;
+}
+
+.m .h {
+  min-width: 0;
+
+  text-align: right;
+}
+
+.m .h .tm {
+  flex-direction: row-reverse;
+
+  justify-content: flex-start;
+}
+
+.m > span:last-child {
+  min-width: 0;
+}
+
+.m i {
+  min-width: 62px;
+
+  padding: 4px 6px;
+
+  border: 1px solid var(--blue-line);
+
+  border-radius: 7px;
+
+  background: var(--blue-soft);
+
+  color: var(--blue);
+
+  font-family: "JetBrains Mono", monospace;
+
+  font-size: 8px;
+
+  font-style: normal;
+
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   NAV
+   ========================================================= */
+
+.nav {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+.nav button {
+  display: grid;
+
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+
+  padding: 0;
+
+  cursor: pointer;
+
+  border: 1px solid var(--blue-line);
+
+  border-radius: 8px;
+
+  background: #fff;
+
+  color: var(--blue);
+
+  font-size: 16px;
+}
+
+.nav button:hover {
+  background: var(--blue-soft);
+}
+
+.nav b {
+  min-width: 72px;
+
+  color: var(--mut);
+
+  font-family: "JetBrains Mono", monospace;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   PLAYERS
+   ========================================================= */
+
+.players-card {
+  padding-top: 17px;
+}
+
+.player-tabs {
+  margin-bottom: 10px;
+}
+
+.player-tabs button.on {
+  background: var(--violet-soft);
+  border-color: var(--violet-line);
+  color: var(--violet);
+}
+
+.players-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  table-layout: fixed;
+
+  font-family: "JetBrains Mono", monospace;
+
+  font-size: 11px;
+}
+
+.players-table th,
+.players-table td {
+  padding: 8px 5px;
+
+  border-bottom: 1px solid var(--line-soft);
+
+  white-space: nowrap;
+}
+
+.players-table th {
+  color: var(--mut-2);
+
+  font-size: 8px;
+
+  font-weight: 700;
+}
+
+.players-table th:nth-child(1),
+.players-table td:nth-child(1) {
+  width: 7%;
+}
+
+.players-table th:nth-child(2),
+.players-table td:nth-child(2) {
+  width: 45%;
+}
+
+.players-table th:nth-child(3),
+.players-table td:nth-child(3) {
+  width: 33%;
+}
+
+.players-table th:nth-child(4),
+.players-table td:nth-child(4) {
+  width: 15%;
+}
+
+.player-name {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  font-family: "Manrope", sans-serif;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  text-align: left;
+}
+
+.team-name {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  color: var(--mut);
+
+  font-family: "Manrope", sans-serif;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  text-align: left;
+}
+
+.stat-value-head {
+  color: var(--violet) !important;
+
+  text-align: center;
+}
+
+.stat-value {
+  color: var(--violet);
+
+  font-weight: 800;
+
+  text-align: center;
+}
+
+.players-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.players-table tbody tr:hover {
+  background: #fbfafe;
+}
+
+
+/* =========================================================
+   EMPTY
+   ========================================================= */
+
+.vacio {
+  margin: 15px 0;
+
+  color: var(--mut);
+
+  font-size: 12px;
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+
+  .wrap {
+    width: calc(100% - 20px);
+
+    padding-top: 12px;
+  }
+
+  .hero {
+    padding: 8px 0 18px;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  .hero-sub {
+    font-size: 12px;
+  }
+
+  .grid {
+    gap: 10px;
+  }
+
+  .column-right {
+    gap: 10px;
+  }
+
+  .card {
+    padding: 13px;
+  }
+
+  .standings-table {
+    font-size: 10px;
+  }
+
+  .standings-table th,
+  .standings-table td {
+    padding: 7px 4px;
+  }
+
+  .tm {
+    font-size: 10px;
+  }
+
+  .cr {
+    width: 21px;
+    height: 21px;
+  }
+
+  .m {
+    min-height: 38px;
+  }
+
+}

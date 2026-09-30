@@ -1,0 +1,18 @@
+# Base local. Uso: podman compose up -d   (o docker compose up -d)
+# db/schema.sql se ejecuta solo la PRIMERA vez (volumen vacio).
+# Si ya tenes un contenedor "futbol-db" andando, no levantes este: usa el tuyo.
+services:
+  db:
+    image: docker.io/library/postgres:16
+    container_name: futbol-db
+    environment:
+      POSTGRES_USER: futbol
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-futbol}
+      POSTGRES_DB: futbol
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - futbol-pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro,z
+volumes:
+  futbol-pgdata:
