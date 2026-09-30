@@ -5,3 +5,4 @@ bsd_dump/
 __pycache__/
 *.pyc
 .pytest_cache/
+crests_raw/

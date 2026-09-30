@@ -1,7 +1,14 @@
 {% macro escudo(nombre, abrev) -%}
 
 <span class="tm">
-  <span class="cr">{{ abrev }}</span>
+  <span class="cr cr--img">
+    <img
+      src="/static/crests/{{ abrev|lower|urlencode }}.webp"
+      alt="" width="26" height="26" loading="lazy"
+      onerror="this.parentNode.classList.remove('cr--img');this.remove()"
+    >
+    <span class="cr-txt">{{ abrev }}</span>
+  </span>
   <span>{{ nombre }}</span>
 </span>
 

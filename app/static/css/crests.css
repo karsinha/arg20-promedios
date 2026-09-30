@@ -1,0 +1,19 @@
+/* Escudos: si la imagen carga se ve sola; si no existe, vuelve el circulo con la abreviatura. */
+.cr.cr--img {
+  width: 26px;
+  height: 26px;
+  border: 0;
+  background: transparent;
+}
+.cr--img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.cr--img .cr-txt {
+  display: none;
+}
+@media (max-width: 640px) {
+  .cr.cr--img { width: 23px; height: 23px; }
+}

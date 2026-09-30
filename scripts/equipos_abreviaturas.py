@@ -32,20 +32,39 @@ def norm(s):
     return " ".join("".join(c if c.isalnum() else " " for c in s).split())
 
 
+def puntaje(db_nombre, nom, busq):
+    """Similitud 0-1. Si todas las palabras de la lista estan en el nombre de la base
+    ("Club Atletico Platense" contiene "platense") vale 0.9, aunque el ratio sea bajo."""
+    n, c = norm(db_nombre), norm(busq or nom)
+    if n == c:
+        return 1.0
+    if set(c.split()) <= set(n.split()):
+        return 0.9
+    return difflib.SequenceMatcher(None, n, c).ratio()
+
+
+def emparejar(equipos):
+    """equipos: [(id, nombre)]. Devuelve [(puntaje, (id, nombre), (nombre_corto, abreviatura))], uno a uno."""
+    pares = sorted(
+        ((puntaje(e[1], nom, busq), e, (nom, ab)) for e in equipos for nom, ab, busq in LISTA),
+        key=lambda x: -x[0])
+    usados_e, usados_l, res = set(), set(), []
+    for r, e, l in pares:
+        if r < 0.6 or e[0] in usados_e or l[0] in usados_l:
+            continue
+        usados_e.add(e[0]); usados_l.add(l[0]); res.append((r, e, l))
+    return res
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--aplicar", action="store_true")
     a = ap.parse_args()
     dsn = os.environ.get("DATABASE_URL") or sys.exit("Falta DATABASE_URL.")
     with psycopg.connect(dsn) as conn:
         equipos = conn.execute("SELECT id, nombre FROM equipo").fetchall()
-        pares = sorted(
-            ((difflib.SequenceMatcher(None, norm(e[1]), norm(busq or nom)).ratio(), e, (nom, ab))
-             for e in equipos for nom, ab, busq in LISTA), key=lambda x: -x[0])
-        usados_e, usados_l, res = set(), set(), []
-        for r, e, l in pares:
-            if r < 0.6 or e[0] in usados_e or l[0] in usados_l:
-                continue
-            usados_e.add(e[0]); usados_l.add(l[0]); res.append((r, e, l))
+        res = emparejar(equipos)
+        usados_e = {e[0] for _, e, _ in res}
+        usados_l = {l[0] for _, _, l in res}
         for r, e, l in sorted(res, key=lambda x: x[2][0]):
             print(f"{r:.2f}  {e[1]:<38} -> {l[0]} ({l[1]})")
         print("\nSin emparejar (base):", [e[1] for e in equipos if e[0] not in usados_e])
