@@ -106,3 +106,29 @@ def test_estados_anual_con_el_cruce_de_promedios():
     assert descenso.estados_anual(ab, mins, maxs, set(), {"C"}) == ["salvado", "salvado", "condenado"]
     # C baja por promedio: el descenso de la Anual pasa a B
     assert descenso.estados_anual(ab, mins, maxs, {"C"}, set()) == ["salvado", "condenado", "condenado"]
+
+def test_estados_anual_cuando_el_condenado_por_promedio_sale_del_pool():
+    from fractions import Fraction as F
+    ab, mins, maxs = ["A", "B", "C"], [F(60), F(40), F(55)], [F(66), F(46), F(61)]
+    # C baja por promedio: A solo tiene a B por debajo y alcanza (antes pedia dos)
+    assert descenso.estados_anual(ab, mins, maxs, {"C"}, set()) == ["salvado", "condenado", "condenado"]
+
+
+def test_necesidad_promedio():
+    def fila(a, p, pj=30):
+        return {"abrev": a, "pts_2024": p, "pts_2025": p, "pts_2026": p, "pj": pj}
+    filas = [fila("A", 20), fila("B", 10), fila("C", 9)]
+    r = descenso.necesidad_promedio(filas, {"A": 3, "B": 3, "C": 3})
+    assert r[0]["estado"] == "salvado"
+    assert (r[1]["estado"], r[1]["puntos"], r[1]["posibles"]) == ("necesita", 7, 9)   # 37/33 > 36/33, 36/33 no
+    assert r[2]["estado"] == "depende"
+
+
+def test_necesidad_anual():
+    filas = [{"abrev": a, "pts": p} for a, p in (("A", 60), ("B", 14), ("C", 10))]
+    rest = {"A": 2, "B": 2, "C": 2}
+    r = descenso.necesidad_anual(filas, rest, set(), {"C"})
+    assert r[0]["estado"] == "salvado"
+    assert (r[1]["estado"], r[1]["puntos"], r[1]["posibles"]) == ("necesita", 3, 6)   # supera el 16 de C
+    assert r[2]["estado"] == "depende"
+    assert descenso.necesidad_anual(filas, rest, {"C"}, set())[1]["estado"] == "condenado"

@@ -5,6 +5,7 @@ por partido de desempate (art. 26.2), no por diferencia de gol; en Promedios el 
 """
 
 from fractions import Fraction
+import math 
 
 CUPOS = 1
 
@@ -47,12 +48,32 @@ def traspaso(filas: list[dict], clave: str, excluidos=frozenset()):
     return {"sale": sale["equipo"], "entra": entra["equipo"]} if sale and entra else None
 
 
+def _umbral_anual(i: int, abrevs: list[str], maximos: list, condenados: set, salvados: set):
+    """Puntos finales que hay que superar (estrictamente) para quedar seguro en la Anual, suponiendo que los
+    rivales ganan todo lo que les falta. None si no hay con quien compararse.
+
+    Con un condenado por promedio ya definido, ese equipo sale del pool: basta superar el menor maximo de los demas.
+    Sin condenado, hay que superar al segundo menor maximo (uno de los dos podria bajar por promedio y dejarte
+    ultimo) o al menor maximo entre los ya salvados en Promedios (seguro que siguen en el pool)."""
+    otros = [(maximos[j], abrevs[j]) for j in range(len(abrevs)) if j != i]
+    if condenados:
+        seguros = [m for m, a in otros if a not in condenados]
+        return min(seguros) if seguros else None
+    candidatos = []
+    por_salvado = [m for m, a in otros if a in salvados]
+    if por_salvado:
+        candidatos.append(min(por_salvado))
+    todos = sorted(m for m, _ in otros)
+    if len(todos) >= 2:
+        candidatos.append(todos[1])
+    return min(candidatos) if candidatos else None
+
+
 def estados_anual(abrevs: list[str], minimos: list, maximos: list, prom_condenados: set, prom_salvados: set) -> list:
     """Estados de la Anual teniendo en cuenta que el que baja por promedio sale del pool. Un solo descenso por tabla.
 
     Condenado: baja por promedio, o es el ultimo del pool aun sin contar a los condenados por promedio.
-    Salvado: tiene >= 2 equipos seguros por debajo (uno solo podria bajar por promedio y dejarlo ultimo),
-    o 1 que ya esta salvado en Promedios (seguira en el pool)."""
+    Salvado: supera el umbral de `_umbral_anual` incluso perdiendo todo lo que le falta."""
     n = len(abrevs)
     res = []
     for i, a in enumerate(abrevs):
@@ -63,13 +84,53 @@ def estados_anual(abrevs: list[str], minimos: list, maximos: list, prom_condenad
             res.append("condenado")
             continue
         otros = [j for j in range(n) if j != i and abrevs[j] not in prom_condenados]
-        debajo = [abrevs[j] for j in range(n) if j != i and maximos[j] < minimos[i]]
         if otros and all(minimos[j] > maximos[i] for j in otros):
             res.append("condenado")
-        elif len(debajo) >= 2 or any(d in prom_salvados for d in debajo):
-            res.append("salvado")
-        else:
-            res.append(None)
+            continue
+        umbral = _umbral_anual(i, abrevs, maximos, prom_condenados, prom_salvados)
+        res.append("salvado" if umbral is not None and minimos[i] > umbral else None)
+    return res
+
+
+def _necesidad(estado, umbral, base, den, posibles) -> dict:
+    """Cuantos puntos mas tiene que sumar un equipo para superar `umbral` (valor final, estrictamente).
+    El valor final es (base + x) / den. Estados: salvado | condenado | necesita | depende (ni ganando todo alcanza solo)."""
+    if estado in ("salvado", "condenado"):
+        return {"estado": estado, "puntos": 0, "posibles": posibles}
+    if umbral is None or den == 0:
+        return {"estado": "depende", "puntos": None, "posibles": posibles}
+    falta = math.floor(umbral * den - base) + 1
+    if falta <= 0:
+        return {"estado": "salvado", "puntos": 0, "posibles": posibles}
+    if falta > posibles:
+        return {"estado": "depende", "puntos": None, "posibles": posibles}
+    return {"estado": "necesita", "puntos": falta, "posibles": posibles}
+
+
+def necesidad_anual(filas: list[dict], restantes: dict[str, int], prom_condenados: set, prom_salvados: set) -> list[dict]:
+    """Por fila de la Anual: puntos que necesita para estar matematicamente salvado."""
+    minimos, maximos = cotas_pts(filas, restantes)
+    abrevs = [f["abrev"] for f in filas]
+    est = estados_anual(abrevs, minimos, maximos, prom_condenados, prom_salvados)
+    res = []
+    for i, f in enumerate(filas):
+        r = restantes.get(f["abrev"], 0)
+        umbral = _umbral_anual(i, abrevs, maximos, prom_condenados, prom_salvados)
+        res.append(_necesidad(est[i], umbral, int(f["pts"]), 1, 3 * r))
+    return res
+
+
+def necesidad_promedio(filas: list[dict], restantes: dict[str, int]) -> list[dict]:
+    """Por fila de Promedios: puntos que necesita sumar para que su promedio final supere el maximo posible del
+    peor rival (fracciones exactas)."""
+    minimos, maximos = cotas_promedio(filas, restantes)
+    est = estados(minimos, maximos)
+    res = []
+    for i, f in enumerate(filas):
+        r = restantes.get(f["abrev"], 0)
+        pts = int(f["pts_2024"]) + int(f["pts_2025"]) + int(f["pts_2026"])
+        rivales = [maximos[j] for j in range(len(filas)) if j != i]
+        res.append(_necesidad(est[i], min(rivales) if rivales else None, pts, int(f["pj"]) + r, 3 * r))
     return res
 
 def cotas_pts(filas: list[dict], restantes: dict[str, int]):
