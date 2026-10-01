@@ -3,7 +3,7 @@
 
 <div class="tabs" style="margin-bottom: 10px;">
   {% for t, et in [('clausura', 'Clausura'), ('apertura', 'Apertura')] %}
-    <button class="{{ 'on' if t == torneo }}" hx-get="/torneo/playoffs?torneo={{ t }}" hx-target="#cuadro">
+    <button class="{{ 'on' if t == torneo }}" hx-get="/parcial/playoffs?torneo={{ t }}" hx-target="#cuadro">
       {{ et }}
     </button>
   {% endfor %}

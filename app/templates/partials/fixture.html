@@ -12,7 +12,7 @@
     <div class="nav">
 
       <button
-        hx-get="/torneo/fixture?modo={{ modo }}&fecha={{ prev }}"
+        hx-get="/parcial/fixture?modo={{ modo }}&fecha={{ prev }}"
         hx-target="#fixture"
         aria-label="Fecha anterior"
       >
@@ -22,7 +22,7 @@
       <b>Fecha {{ fecha }}</b>
 
       <button
-        hx-get="/torneo/fixture?modo={{ modo }}&fecha={{ next }}"
+        hx-get="/parcial/fixture?modo={{ modo }}&fecha={{ next }}"
         hx-target="#fixture"
         aria-label="Fecha siguiente"
       >
@@ -89,6 +89,6 @@
 </div>
 
 {% if hay_vivo %}
-  <div hx-get="/torneo/fixture?modo={{ modo }}&fecha={{ fecha }}"
+  <div hx-get="/parcial/fixture?modo={{ modo }}&fecha={{ fecha }}"
        hx-trigger="every 30s" hx-target="#fixture"></div>
 {% endif %}

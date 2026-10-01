@@ -5,9 +5,9 @@
     {% for m, et in etiquetas.items() %}
       <button
         class="{{ 'on' if m == modo }}"
-        hx-get="/modo/{{ m }}"
+        hx-get="/parcial/modo/{{ m }}"
         hx-target="#main"
-        hx-push-url="/?modo={{ m }}"
+        hx-push-url="{{ url_modo(m) }}"
       >
         {{ et }}
       </button>

@@ -1,5 +1,6 @@
-"""Portada: compone los 6 bloques (tabla + fixture + jugadores) usando los modulos de dominio."""
-from fastapi import APIRouter, Request
+"""Portada y paginas de cada modo: compone los bloques (tabla + fixture + jugadores) con los modulos de dominio."""
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import RedirectResponse
 
 from app.core.templating import templates
 from app.modules.jugadores.router import contexto_jugadores
@@ -26,13 +27,23 @@ def contexto_main(modo: str) -> dict:
     return datos
 
 
-@router.get("/")
-def portada(request: Request, modo: str = "clausura"):
+def pagina(request: Request, modo: str):
     return templates.TemplateResponse(
         request, "home.html",
         {"anio": modos.ANIO, "actualizado": queries.ultima_actualizacion(), **contexto_main(modo)})
 
 
-@router.get("/modo/{modo}")
-def cambiar_modo(request: Request, modo: str):
-    return templates.TemplateResponse(request, "partials/main.html", contexto_main(modo))
+@router.get("/")
+def portada(request: Request, modo: str | None = None):
+    if modo is not None:                      # URL vieja: /?modo=anual
+        if modo not in modos.ETIQUETAS:
+            raise HTTPException(404, "Modo desconocido")
+        return RedirectResponse(modos.url_modo(modo), status_code=301)
+    return pagina(request, "clausura")
+
+
+@router.get("/torneo/{modo}")
+def torneo(request: Request, modo: str):
+    if modo == "clausura":                    # una sola URL para el mismo contenido
+        return RedirectResponse("/", status_code=301)
+    return pagina(request, modo)

@@ -58,26 +58,36 @@ def test_portada_clausura(cli):
 
 
 def test_modos(cli):
-    assert "Racing Club" in cli.get("/modo/anual").text
-    p = cli.get("/modo/promedios").text
+    assert "Racing Club" in cli.get("/torneo/anual").text
+    p = cli.get("/torneo/promedios").text
     assert "Talleres" in p and "1.214" in p
+    assert 'hx-push-url="/torneo/anual"' in cli.get("/").text
 
 
-def test_fixture_y_jugadores(cli):
-    assert "Fecha 3" in cli.get("/torneo/fixture?modo=clausura&fecha=3").text
-    assert "Asist." in cli.get("/jugadores?modo=clausura&tipo=asistencias").text
+def test_fragmentos(cli):
+    anual = cli.get("/parcial/modo/anual").text
+    assert "Racing Club" in anual and "<html" not in anual
+    assert "Fecha 3" in cli.get("/parcial/fixture?modo=clausura&fecha=3").text
+    assert "Asist." in cli.get("/parcial/jugadores?modo=clausura&tipo=asistencias").text
 
 
 def test_modo_invalido(cli):
-    assert cli.get("/modo/xxx").status_code == 404
+    assert cli.get("/torneo/xxx").status_code == 404
+    assert cli.get("/parcial/modo/xxx").status_code == 404
+    assert cli.get("/?modo=xxx").status_code == 404
+
+
+def test_redirecciones_de_urls_viejas(cli):
+    r = cli.get("/?modo=anual", follow_redirects=False)
+    assert r.status_code == 301 and r.headers["location"] == "/torneo/anual"
+    r = cli.get("/torneo/clausura", follow_redirects=False)
+    assert r.status_code == 301 and r.headers["location"] == "/"
 
 
 def test_playoffs_proyectado(cli):
-    r = cli.get("/modo/playoffs").text
+    r = cli.get("/torneo/playoffs").text
     assert "Octavos" in r and "Semifinales" in r and "1A" in r and "8B" in r
-    assert "Apertura" in cli.get("/torneo/playoffs?torneo=apertura").text
-
-
+    assert "Apertura" in cli.get("/parcial/playoffs?torneo=apertura").text
 
 
 def test_tema(cli):

@@ -1,9 +1,5 @@
-from fastapi import APIRouter, Request
-
-from app.core.templating import templates
+"""Contextos de torneo (fixture, playoffs, tablas por zona). Los usan la portada y los fragmentos HTMX."""
 from app.modules.torneo import modos, playoffs, queries
-
-router = APIRouter(prefix="/torneo")
 
 
 def contexto_fixture(ctx: modos.Contexto, fecha: int | None = None) -> dict:
@@ -27,13 +23,6 @@ def agrupar_por_zona(filas: list[dict]) -> list[tuple]:
     return sorted(zonas.items(), key=lambda kv: (kv[0] is None, kv[0] or ""))
 
 
-@router.get("/fixture")
-def fixture(request: Request, modo: str = "clausura", fecha: int | None = None):
-    ctx = modos.resolver(modo)
-    return templates.TemplateResponse(
-        request, "partials/fixture.html", {"modo": modo, **contexto_fixture(ctx, fecha)})
-
-
 def contexto_playoffs(torneo: str = "clausura") -> dict:
     if torneo not in ("apertura", "clausura"):
         torneo = "clausura"
@@ -42,8 +31,3 @@ def contexto_playoffs(torneo: str = "clausura") -> dict:
     jugados = queries.playoffs(ctx.torneo_id)
     return {"torneo": torneo, "rondas": playoffs.cuadro(zonas, jugados),
             "proyectado": not any(p["instancia"] == "round-of-16" for p in jugados)}
-
-
-@router.get("/playoffs")
-def cuadro_playoffs(request: Request, torneo: str = "clausura"):
-    return templates.TemplateResponse(request, "partials/cuadro.html", contexto_playoffs(torneo))

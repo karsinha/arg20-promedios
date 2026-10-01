@@ -29,3 +29,9 @@ def resolver(modo: str) -> Contexto:
     if base is None:
         raise HTTPException(503, "No hay torneos cargados. Correr: make sync")
     return Contexto(modo, base["id"], base["temporada_id"])
+
+
+
+def url_modo(modo: str) -> str:
+    """URL publica de cada pestania. Clausura es la portada."""
+    return "/" if modo == "clausura" else f"/torneo/{modo}"

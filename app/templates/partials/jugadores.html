@@ -17,7 +17,7 @@
 
     <button
       class="{{ 'on' if t == tipo }}"
-      hx-get="/jugadores?modo={{ modo }}&tipo={{ t }}"
+      hx-get="/parcial/jugadores?modo={{ modo }}&tipo={{ t }}"
       hx-target="#jugadores"
     >
       {{ et }}

@@ -1,10 +1,6 @@
-from fastapi import APIRouter, Request
-
-from app.core.templating import templates
+"""Contexto de goleadores y asistidores. Lo usan la portada y el fragmento HTMX."""
 from app.modules.jugadores import queries
 from app.modules.torneo import modos
-
-router = APIRouter(prefix="/jugadores")
 
 
 def contexto_jugadores(ctx: modos.Contexto, tipo: str = "goles") -> dict:
@@ -15,10 +11,3 @@ def contexto_jugadores(ctx: modos.Contexto, tipo: str = "goles") -> dict:
     else:
         filas = queries.top_torneo(ctx.torneo_id, tipo)
     return {"tipo": tipo, "filas_jugadores": filas}
-
-
-@router.get("")
-def jugadores(request: Request, modo: str = "clausura", tipo: str = "goles"):
-    ctx = modos.resolver(modo)
-    return templates.TemplateResponse(
-        request, "partials/jugadores.html", {"modo": modo, **contexto_jugadores(ctx, tipo)})
