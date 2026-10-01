@@ -26,8 +26,8 @@ def url_absoluta(ruta: str) -> str:
 def datos_seo(modo: str) -> dict:
     return {"titulo": f"{TITULOS[modo]} {modos.ANIO} · Liga Profesional Argentina",
             "descripcion": DESCRIPCIONES[modo],
-            "url": url_absoluta(modos.url_modo(modo))}
-
+            "url": url_absoluta(modos.url_modo(modo)),
+            "imagen": url_absoluta("/og/sitio.png")}
 
 @router.get("/sitemap.xml")
 def sitemap():
@@ -48,11 +48,13 @@ def datos_seo_club(equipo: dict) -> dict:
     return {"titulo": f"{nombre} {modos.ANIO} · Resultados, fixture y goleadores · Liga Profesional",
             "descripcion": (f"{nombre} en la Liga Profesional Argentina {modos.ANIO}: próximo partido, últimos "
                             "resultados, forma, fixture completo, posición y goleadores."),
-            "url": url_absoluta(f"/club/{equipo['slug']}")}
+            "url": url_absoluta(f"/club/{equipo['slug']}"),
+            "imagen": url_absoluta(f"/og/club/{equipo['slug']}.png")}
 
 
 def datos_seo_descenso() -> dict:
     return {"titulo": f"Descenso {modos.ANIO} · Tabla Anual y Promedios · Liga Profesional Argentina",
             "descripcion": (f"Quién se salva y quién baja en {modos.ANIO}: zona de descenso de la Anual y los "
                             "Promedios, partidos que faltan y situación matemática de cada equipo."),
-            "url": url_absoluta("/descenso")}
+            "url": url_absoluta("/descenso"),
+            "imagen": url_absoluta("/og/sitio.png")}
