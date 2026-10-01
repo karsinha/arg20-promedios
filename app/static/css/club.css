@@ -1,0 +1,37 @@
+/* Pagina de club. Solo usa variables de color: el modo oscuro sale gratis. */
+.brand a { color: inherit; text-decoration: none; }
+a.tm { color: inherit; text-decoration: none; }
+a.tm:hover > span:last-child { text-decoration: underline; }
+
+.forma { display: flex; gap: 6px; margin: 4px 0 6px; }
+.forma span {
+  display: grid; place-items: center; width: 26px; height: 26px; border-radius: 7px;
+  color: var(--card); font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700;
+}
+.forma-g { background: var(--green); }
+.forma-e { background: var(--mut-2); }
+.forma-p { background: var(--red); }
+
+.datos { margin: 0 0 6px; padding: 0; list-style: none; font-size: 13px; }
+.datos li {
+  display: flex; justify-content: space-between; gap: 12px; padding: 7px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.datos li:last-child { border-bottom: 0; }
+.datos b { color: var(--green); font-family: "JetBrains Mono", monospace; font-size: 11px; text-align: right; }
+
+.club-tabla { width: 100%; border-collapse: collapse; font-family: "JetBrains Mono", monospace; font-size: 11px; }
+.club-tabla th, .club-tabla td { padding: 7px 5px; border-bottom: 1px solid var(--line-soft); text-align: center; white-space: nowrap; }
+.club-tabla th { color: var(--mut-2); font-size: 8px; font-weight: 700; }
+.club-tabla td:first-child, .club-tabla th:first-child { text-align: left; font-family: "Manrope", sans-serif; font-weight: 700; font-size: 12px; }
+.club-tabla tbody tr:last-child td { border-bottom: 0; }
+.club-lista td:first-child { width: 8%; color: var(--mut-2); font-family: "JetBrains Mono", monospace; font-weight: 500; font-size: 11px; }
+.club-lista td:nth-child(2) { text-align: left; font-family: "Manrope", sans-serif; font-weight: 700; font-size: 12px; }
+
+.m-et {
+  margin-top: 10px; color: var(--mut-2); font-family: "JetBrains Mono", monospace;
+  font-size: 9px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+}
+.m.res-g { box-shadow: inset 3px 0 0 var(--green); padding-left: 8px; }
+.m.res-e { box-shadow: inset 3px 0 0 var(--mut-2); padding-left: 8px; }
+.m.res-p { box-shadow: inset 3px 0 0 var(--red); padding-left: 8px; }

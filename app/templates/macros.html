@@ -73,3 +73,12 @@
 </div>
 
 {% endmacro %}
+
+{% macro partido_club(v) %}
+{% if v.etiqueta %}<div class="m-et">{{ v.etiqueta }}</div>{% endif %}
+<div class="m{{ (' res-' ~ v.resultado|lower) if v.resultado }}">
+  <span class="h">{{ escudo(v.izq.equipo, v.izq.abrev) }}</span>
+  <i class="{{ 'vivo' if v.estado == 'en_juego' }}">{{ v.marcador }}</i>
+  <span>{{ escudo(v.der.equipo, v.der.abrev) }}</span>
+</div>
+{% endmacro %}

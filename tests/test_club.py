@@ -53,3 +53,41 @@ def test_playoff_con_penales_y_etiqueta():
 def test_sin_partidos():
     r = resumen.resumen([], RIVER)
     assert r["proximo"] is None and r["forma"] == [] and r["condicion"]["local"]["pj"] == 0
+
+
+# ---------------------------------------------------------------- pagina
+import pytest
+from fastapi.testclient import TestClient
+
+from app.core import db
+from app.core.config import settings
+from app.main import app
+from app.modules.club import queries as club_q
+from tests.test_app import falsa
+
+EQUIPO = {"id": RIVER, "equipo": "River Plate", "abrev": "RIV", "zona": "A", "slug": "river"}
+
+
+@pytest.fixture()
+def cli(monkeypatch):
+    monkeypatch.setattr(db, "consultar", falsa)
+    monkeypatch.setattr(club_q, "equipo_por_slug", lambda s: EQUIPO if s == "river" else None)
+    monkeypatch.setattr(club_q, "partidos_equipo", lambda eid, anio: PARTIDOS)
+    monkeypatch.setattr(club_q, "top_equipo", lambda tid, eid, tipo, limite=5: [
+        {"pos": 1, "jugador": "J. Candia", "goles": 7, "asistencias": 2}])
+    return TestClient(app)
+
+
+def test_pagina_de_club(cli, monkeypatch):
+    monkeypatch.setattr(settings, "sitio_url", "https://ejemplo.com")
+    r = cli.get("/club/river")
+    assert r.status_code == 200
+    t = r.text
+    assert "River Plate" in t and "Próximo partido" in t and "07/10 20:00" in t
+    assert "1.º de 1 en la Zona A" in t and "J. Candia" in t
+    assert '<link rel="canonical" href="https://ejemplo.com/club/river">' in t
+    assert "forma-g" in t and "res-p" in t
+
+
+def test_club_inexistente(cli):
+    assert cli.get("/club/nadie").status_code == 404

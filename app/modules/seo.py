@@ -40,3 +40,10 @@ def sitemap():
 def robots():
     texto = f"User-agent: *\nDisallow: /parcial/\nDisallow: /salud\nSitemap: {url_absoluta('/sitemap.xml')}\n"
     return Response(texto, media_type="text/plain")
+
+def datos_seo_club(equipo: dict) -> dict:
+    nombre = equipo["equipo"]
+    return {"titulo": f"{nombre} {modos.ANIO} · Resultados, fixture y goleadores · Liga Profesional",
+            "descripcion": (f"{nombre} en la Liga Profesional Argentina {modos.ANIO}: próximo partido, últimos "
+                            "resultados, forma, fixture completo, posición y goleadores."),
+            "url": url_absoluta(f"/club/{equipo['slug']}")}

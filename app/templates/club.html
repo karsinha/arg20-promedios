@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ seo.titulo }}{% endblock %}
+
+{% block meta %}
+  <meta name="description" content="{{ seo.descripcion }}">
+  <link rel="canonical" href="{{ seo.url }}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+  <meta property="og:site_name" content="Fútbol Argentina">
+  <meta property="og:title" content="{{ seo.titulo }}">
+  <meta property="og:description" content="{{ seo.descripcion }}">
+  <meta property="og:url" content="{{ seo.url }}">
+  <meta name="twitter:card" content="summary">
+{% endblock %}
+
+{% block contenido %}
+{% from "macros.html" import partido_club %}
+
+<header class="hero">
+  <div class="brand"><span class="brand-dot"></span><a href="/">FÚTBOL ARGENTINA</a></div>
+  <h1>{{ equipo.equipo }} <span>{{ anio }}</span></h1>
+  <p class="hero-sub">Liga Profesional{% if equipo.zona %} · Zona {{ equipo.zona }}{% endif %}</p>
+</header>
+
+<div class="grid">
+
+  <section class="column-left">
+
+    <div class="card standings-card">
+      <div class="section-head">
+        <div><span class="eyebrow">RESUMEN</span><h2>Forma y posición</h2></div>
+      </div>
+
+      <h3 class="zona">Últimos 5</h3>
+      <div class="forma">
+        {% for r in resumen.forma %}<span class="forma-{{ r|lower }}">{{ r }}</span>{% else %}<p class="vacio">Todavía no jugó.</p>{% endfor %}
+      </div>
+
+      <h3 class="zona">Posición</h3>
+      <ul class="datos">
+        <li><span>Clausura</span>{% if puesto_zona %}<b>{{ puesto_zona.pos }}.º de {{ puesto_zona.de }} en la Zona {{ equipo.zona }} · {{ puesto_zona.pts }} pts</b>{% else %}<b>—</b>{% endif %}</li>
+        <li><span>Anual</span>{% if puesto_anual %}<b>{{ puesto_anual.pos }}.º de {{ puesto_anual.de }} · {{ puesto_anual.pts }} pts</b>{% else %}<b>—</b>{% endif %}</li>
+      </ul>
+
+      <h3 class="zona">Local y visitante (fase de zona)</h3>
+      <div class="ov">
+        <table class="club-tabla">
+          <thead>
+            <tr><th></th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>PTS</th></tr>
+          </thead>
+          <tbody>
+            {% for nombre, c in [('Local', resumen.condicion.local), ('Visitante', resumen.condicion.visitante)] %}
+              <tr>
+                <td>{{ nombre }}</td><td>{{ c.pj }}</td><td>{{ c.pg }}</td><td>{{ c.pe }}</td><td>{{ c.pp }}</td>
+                <td>{{ c.gf }}</td><td>{{ c.gc }}</td><td class="points">{{ c.pts }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card fixture-card" style="margin-top: 16px;">
+      <div class="section-head">
+        <div><span class="eyebrow">PARTIDOS</span><h2>Próximo y últimos</h2></div>
+      </div>
+
+      <h3 class="zona">Próximo partido</h3>
+      <div class="fixture-list">
+        {% if resumen.proximo %}{{ partido_club(resumen.proximo) }}{% else %}<p class="vacio">No hay partidos pendientes.</p>{% endif %}
+      </div>
+
+      <h3 class="zona">Últimos resultados</h3>
+      <div class="fixture-list">
+        {% for v in resumen.ultimos %}{{ partido_club(v) }}{% else %}<p class="vacio">Todavía no jugó.</p>{% endfor %}
+      </div>
+    </div>
+
+  </section>
+
+  <section class="column-right">
+
+    <div class="card fixture-card">
+      <div class="section-head">
+        <div><span class="eyebrow">TEMPORADA</span><h2>Fixture completo</h2></div>
+      </div>
+      <div class="fixture-list">
+        {% for v in resumen.fixture %}{{ partido_club(v) }}{% else %}<p class="vacio">Todavía no hay partidos cargados.</p>{% endfor %}
+      </div>
+    </div>
+
+    <div class="card players-card">
+      <div class="section-head">
+        <div><span class="eyebrow">ESTADÍSTICAS</span><h2>Jugadores del club</h2></div>
+      </div>
+      {% for titulo, filas, clave in [('Goleadores', goleadores, 'goles'), ('Asistidores', asistidores, 'asistencias')] %}
+        <h3 class="zona">{{ titulo }}</h3>
+        <table class="club-tabla club-lista">
+          <tbody>
+            {% for f in filas %}
+              <tr><td>{{ f.pos }}</td><td>{{ f.jugador }}</td><td class="stat-value">{{ f[clave] }}</td></tr>
+            {% else %}
+              <tr><td colspan="3" class="vacio">Sin datos todavía.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endfor %}
+    </div>
+
+  </section>
+
+</div>
+
+<footer class="pie">
+  <p>
+    Datos: <a href="https://sports.bzzoiro.com" target="_blank" rel="noopener">BSD</a>.
+    {% if actualizado %}Última actualización: {{ actualizado.strftime('%d/%m/%Y %H:%M') }} (hora de Argentina).{% endif %}
+  </p>
+</footer>
+
+{% endblock %}
