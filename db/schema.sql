@@ -34,6 +34,7 @@ CREATE TABLE equipo (
   nombre        TEXT NOT NULL,          -- nombre propio nuestro (BSD es inconsistente: "Club Atletico Platense" vs "Platense")
   nombre_corto  TEXT,
   abreviatura   VARCHAR(4),
+  slug          TEXT UNIQUE,          -- URL corta del club: /club/<slug>
   zona_2026     CHAR(1) CHECK (zona_2026 IN ('A','B')),
   escudo_url    TEXT
 );

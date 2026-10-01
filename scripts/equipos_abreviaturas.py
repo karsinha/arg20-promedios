@@ -27,6 +27,19 @@ LISTA = [
 ]
 
 
+# URL corta de cada club (/club/<slug>), por abreviatura
+SLUGS = {
+    "ALD": "aldosivi", "ARG": "argentinos", "ATU": "tucuman", "BAN": "banfield", "BAR": "barracas",
+    "BEL": "belgrano", "BOC": "boca", "CCO": "central-cordoba", "DYJ": "defensa", "RIE": "riestra",
+    "EST": "estudiantes", "ERC": "estudiantes-rc", "GLP": "gimnasia", "GME": "gimnasia-mendoza",
+    "HUR": "huracan", "IND": "independiente", "IRI": "rivadavia", "INS": "instituto", "LAN": "lanus",
+    "NOB": "newells", "PLA": "platense", "RAC": "racing", "RIV": "river", "ROS": "rosario-central",
+    "SLO": "san-lorenzo", "SAR": "sarmiento", "TAL": "talleres", "TIG": "tigre", "UNI": "union",
+    "VEL": "velez",
+}
+assert set(SLUGS) == {ab for _, ab, _ in LISTA}
+
+
 def norm(s):
     s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().lower()
     return " ".join("".join(c if c.isalnum() else " " for c in s).split())
@@ -71,7 +84,8 @@ def main():
         print("Sin emparejar (lista):", [n for n, _, _ in LISTA if n not in usados_l])
         if a.aplicar:
             for _, e, (nom, ab) in res:
-                conn.execute("UPDATE equipo SET nombre_corto = %s, abreviatura = %s WHERE id = %s", (nom, ab, e[0]))
+                conn.execute("UPDATE equipo SET nombre_corto = %s, abreviatura = %s, slug = %s WHERE id = %s",
+                             (nom, ab, SLUGS[ab], e[0]))
             print(f"\n{len(res)} equipos actualizados.")
         else:
             print("\nSimulacion: no se escribio nada. Usa --aplicar para guardar.")
