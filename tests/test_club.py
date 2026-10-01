@@ -95,3 +95,12 @@ def test_club_inexistente(cli):
 
 def test_sitemap_incluye_los_clubes(cli):
     assert "/club/river</loc>" in cli.get("/sitemap.xml").text
+
+
+def test_el_escudo_linkea_al_club(cli, monkeypatch):
+    from app.modules.torneo import queries as torneo_q
+    f = dict(pj=2, pg=0, pe=0, pp=0, gf=0, gc=0, dg=0)
+    monkeypatch.setattr(torneo_q, "tabla_anual", lambda tid: [
+        {"equipo": "Racing Club", "abrev": "RAC", "slug": "racing", "pts": 6, **f}])
+    assert 'href="/club/racing"' in cli.get("/torneo/anual").text
+    assert 'href="/club/' not in cli.get("/torneo/playoffs").text    # sin slug en los datos falsos, no hay link roto

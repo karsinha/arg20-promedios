@@ -1,7 +1,7 @@
 from app.core import db
 
 # Nombre y abreviatura para mostrar: los propios si existen (scripts/equipos_abreviaturas.py), si no un fallback.
-_EQ = "COALESCE(e.nombre_corto, e.nombre) AS equipo, COALESCE(e.abreviatura, UPPER(LEFT(e.nombre, 3))) AS abrev"
+_EQ = "COALESCE(e.nombre_corto, e.nombre) AS equipo, COALESCE(e.abreviatura, UPPER(LEFT(e.nombre, 3))) AS abrev, e.slug"
 
 
 def tabla_torneo(torneo_id: int) -> list[dict]:
@@ -55,9 +55,9 @@ def partidos(torneo_id: int, fecha: int) -> list[dict]:
         """SELECT p.id, p.estado::text AS estado, p.goles_local, p.goles_visitante,
                   p.fecha_hora AT TIME ZONE 'America/Argentina/Buenos_Aires' AS hora_local,
                   COALESCE(l.nombre_corto, l.nombre) AS local,
-                  COALESCE(l.abreviatura, UPPER(LEFT(l.nombre, 3))) AS local_abrev,
+                  COALESCE(l.abreviatura, UPPER(LEFT(l.nombre, 3))) AS local_abrev, l.slug AS local_slug,
                   COALESCE(v.nombre_corto, v.nombre) AS visitante,
-                  COALESCE(v.abreviatura, UPPER(LEFT(v.nombre, 3))) AS visitante_abrev
+                  COALESCE(v.abreviatura, UPPER(LEFT(v.nombre, 3))) AS visitante_abrev, v.slug AS visitante_slug
            FROM partido p JOIN equipo l ON l.id = p.local_id JOIN equipo v ON v.id = p.visitante_id
            WHERE p.torneo_id = %s AND p.fase = 'zona' AND p.fecha_nro = %s AND NOT p.reprogramado
            ORDER BY p.fecha_hora, p.id""", (torneo_id, fecha))
@@ -69,9 +69,9 @@ def playoffs(torneo_id: int) -> list[dict]:
                   p.pen_local, p.pen_visitante,
                   p.fecha_hora AT TIME ZONE 'America/Argentina/Buenos_Aires' AS hora_local,
                   COALESCE(l.nombre_corto, l.nombre) AS local,
-                  COALESCE(l.abreviatura, UPPER(LEFT(l.nombre, 3))) AS local_abrev,
+                  COALESCE(l.abreviatura, UPPER(LEFT(l.nombre, 3))) AS local_abrev, l.slug AS local_slug,
                   COALESCE(v.nombre_corto, v.nombre) AS visitante,
-                  COALESCE(v.abreviatura, UPPER(LEFT(v.nombre, 3))) AS visitante_abrev
+                  COALESCE(v.abreviatura, UPPER(LEFT(v.nombre, 3))) AS visitante_abrev, v.slug AS visitante_slug
            FROM partido p JOIN equipo l ON l.id = p.local_id JOIN equipo v ON v.id = p.visitante_id
            WHERE p.torneo_id = %s AND p.fase = 'playoff' AND NOT p.reprogramado
            ORDER BY p.fecha_hora, p.id""", (torneo_id,))

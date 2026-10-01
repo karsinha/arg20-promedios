@@ -38,8 +38,8 @@ def _ganador(p):
         if gl is None or gv is None or gl == gv:
             return None
     if gl > gv:
-        return {"equipo": p["local"], "abrev": p["local_abrev"]}
-    return {"equipo": p["visitante"], "abrev": p["visitante_abrev"]}
+        return {"equipo": p["local"], "abrev": p["local_abrev"], "slug": p.get("local_slug")}
+    return {"equipo": p["visitante"], "abrev": p["visitante_abrev"], "slug": p.get("visitante_slug")}
 
 
 def _marcador(p):
@@ -64,8 +64,8 @@ def _buscar(lista, a, b):
 def _nodo(a, b, lista, pos=(None, None)):
     p = _buscar(lista, a, b)
     if p:   # con partido jugado/programado se muestran sus datos (local real)
-        a = {"equipo": p["local"], "abrev": p["local_abrev"]}
-        b = {"equipo": p["visitante"], "abrev": p["visitante_abrev"]}
+        a = {"equipo": p["local"], "abrev": p["local_abrev"], "slug": p.get("local_slug")}
+        b = {"equipo": p["visitante"], "abrev": p["visitante_abrev"], "slug": p.get("visitante_slug")}
     return {"local": a, "visitante": b, "local_pos": pos[0], "visitante_pos": pos[1],
             "marcador": _marcador(p), "ganador": _ganador(p)}
 

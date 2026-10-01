@@ -1,6 +1,7 @@
-{% macro escudo(nombre, abrev) -%}
+{% macro escudo(nombre, abrev, slug=none) -%}
 
-<span class="tm">
+{% set tag = 'a' if slug else 'span' %}
+<{{ tag }} class="tm"{% if slug %} href="/club/{{ slug|urlencode }}"{% endif %}>
   <span class="cr cr--img">
     <img
       src="/static/crests/{{ abrev|lower|urlencode }}.webp"
@@ -10,7 +11,7 @@
     <span class="cr-txt">{{ abrev }}</span>
   </span>
   <span>{{ nombre }}</span>
-</span>
+</{{ tag }}>
 
 {%- endmacro %}
 
@@ -48,7 +49,7 @@
             {{ loop.index }}
           </td>
 
-          <td class="t team-cell">{{ escudo(f.equipo, f.abrev) }}{% if f.titulo %} <span class="estrella" title="{{ f.titulo }}">★</span>{% endif %}</td>
+          <td class="t team-cell">{{ escudo(f.equipo, f.abrev, f.slug) }}{% if f.titulo %} <span class="estrella" title="{{ f.titulo }}">★</span>{% endif %}</td>
 
           <td>{{ f.pj }}</td>
           <td>{{ f.pg }}</td>
@@ -77,8 +78,8 @@
 {% macro partido_club(v) %}
 {% if v.etiqueta %}<div class="m-et">{{ v.etiqueta }}</div>{% endif %}
 <div class="m{{ (' res-' ~ v.resultado|lower) if v.resultado }}">
-  <span class="h">{{ escudo(v.izq.equipo, v.izq.abrev) }}</span>
+  <span class="h">{{ escudo(v.izq.equipo, v.izq.abrev, v.izq.slug) }}</span>
   <i class="{{ 'vivo' if v.estado == 'en_juego' }}">{{ v.marcador }}</i>
-  <span>{{ escudo(v.der.equipo, v.der.abrev) }}</span>
+  <span>{{ escudo(v.der.equipo, v.der.abrev, v.der.slug) }}</span>
 </div>
 {% endmacro %}

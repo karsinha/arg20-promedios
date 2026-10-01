@@ -19,12 +19,12 @@
     {% for n in ronda %}
       <div class="m">
         <span class="h">
-          {% if n.local %}{{ escudo(n.local.equipo, n.local.abrev) }}{% else %}<span class="tm">Por definir</span>{% endif %}
+          {% if n.local %}{{ escudo(n.local.equipo, n.local.abrev, n.local.slug) }}{% else %}<span class="tm">Por definir</span>{% endif %}
           {% if n.local_pos %}<small class="seed">{{ n.local_pos }}</small>{% endif %}
         </span>
         <i>{{ n.marcador }}</i>
         <span>
-          {% if n.visitante %}{{ escudo(n.visitante.equipo, n.visitante.abrev) }}{% else %}<span class="tm">Por definir</span>{% endif %}
+          {% if n.visitante %}{{ escudo(n.visitante.equipo, n.visitante.abrev, n.visitante.slug) }}{% else %}<span class="tm">Por definir</span>{% endif %}
           {% if n.visitante_pos %}<small class="seed">{{ n.visitante_pos }}</small>{% endif %}
         </span>
       </div>
