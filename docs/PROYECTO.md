@@ -28,7 +28,7 @@ Filosofía: **datos confiables + herramientas útiles + experiencia rápida + co
 - [x] Línea de clasificación (8.º puesto) en las tablas de zona.
 - [x] **Página de club** `/club/<slug>`: forma (últimos 5), posición en Clausura y Anual, local/visitante, próximo partido, últimos resultados, fixture completo y goleadores/asistidores del club. Slug corto por club (`equipo.slug`, migración 005); los escudos de tablas, fixture y playoffs linkean al club.
 - [x] **Mi club** sin cuentas (`localStorage`): botón en la página del club y tarjeta en la portada (`/parcial/club/<slug>`).
-- [x] **Página `/descenso`**: Anual y Promedios (fondo de cada tabla) con margen, partidos restantes y estado matemático (Salvado / Desciende, con desigualdades estrictas: un empate no define nada). Enlazada desde las leyendas de Anual y Promedios.
+- [x] **Página `/descenso`**: Anual y Promedios (fondo de cada tabla) con margen, partidos restantes y estado matemático (Salvado / Desciende, con desigualdades estrictas: un empate no define nada). Enlazada desde las leyendas de Anual y Promedios.El peor promedio sale del pool de la Anual: si también es último de la Anual, baja el siguiente (aviso de traspaso en la leyenda).
 
 ### Pendiente inmediato
 - [ ] Validar el resto de las tablas con `scripts/checks/cruce_tabla.py` (Clausura vs BSD; Anual vs CSV externo). Falta el desempate por goles a favor, que ningún caso real probó.
@@ -82,6 +82,7 @@ Redirecciones 301: `/?modo=xxx` → `/torneo/xxx` y `/torneo/clausura` → `/`.
 - **Descenso:** `torneo/descenso.py` (puro) marca el último de Anual y Promedios, avisa si hay empate en la zona y calcula el estado matemático (`cotas_pts`, `cotas_promedio`, `estados`) con fracciones exactas. Los partidos restantes salen de `partido` (`queries.partidos_restantes`), sin llamadas nuevas a BSD.
 - **Copas:** `torneo/copas.py` (puro) asigna Libertadores y Sudamericana desde la Anual. El esquema de cupos **no está confirmado** (ver Pendientes).
 - El orden de las tablas es pts, dg, gf: solo de presentación. Un empate en puntos en zona de descenso se define por partido de desempate.
+- Promedios se resuelve primero; su descendido no ocupa lugar en la Anual (descenso.marcar(..., excluidos=...), traspaso, estados_anual).
 
 ### Front, SEO y personalización
 - Jinja2 + HTMX. Los fragmentos viven bajo `/parcial/` para no mezclarse con las páginas indexables.
@@ -145,7 +146,7 @@ Foro general, reputación, historial de cambios de datos (alcanza con `actualiza
 - Nombres de equipo inconsistentes entre endpoints ("Club Atlético Platense" vs "Platense"): usar `ext_id` y nuestras abreviaturas.
 
 ## 8. Pendientes / a verificar
-- Texto oficial del reglamento: desempate exacto en tablas de zona (se usa pts, dg, gf), y si el doble último baja al anteúltimo de la Anual (reportes repetidos, sin fuente oficial).
+- Texto oficial del reglamento: desempate exacto en tablas de zona (se usa pts, dg, gf), y Adoptado como regla (el siguiente de la Anual); sin texto oficial todavía.
 - Equipos ascendidos en Promedios (sin historial de todos los años): qué regla aplica.
 - **Cupos a copas:** el esquema usado (campeones de Apertura y Clausura + 3 de la Anual, 6 a Sudamericana) no está confirmado con el reglamento. Constantes en `torneo/copas.py`. Tampoco hay criterio de desempate definido para empates fuera del descenso.
 - Campo id y forma real de `/events/live/` y de `/fixtures/changes/` (confirmar en el primer partido / primera corrida).
