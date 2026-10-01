@@ -145,6 +145,26 @@ def test_anual_con_campeon_y_zonas_de_copa(cli, monkeypatch):
     assert "Copa Libertadores" in t and "Copa Sudamericana" in t
     assert "Todavía sin campeón" not in t
 
+import re
+
+def test_la_clase_de_copa_queda_en_la_fila_con_celdas(cli, monkeypatch):
+    f = dict(pj=2, pg=0, pe=0, pp=0, gf=0, gc=0, dg=0)
+    monkeypatch.setattr(queries, "tabla_anual", lambda tid: [
+        {"equipo": "Racing Club", "abrev": "RAC", "pts": 9, **f},
+        {"equipo": "Tigre", "abrev": "TIG", "pts": 6, **f}])
+    t = cli.get("/torneo/anual").text
+    assert re.search(r'<tr class="[^"]*\blib\b[^"]*">\s*<td', t)
+
 
 def test_anual_avisa_si_falta_el_campeon(cli):
     assert "Todavía sin campeón: Apertura y Clausura" in cli.get("/torneo/anual").text
+
+def test_la_clase_de_copa_queda_en_la_fila_con_celdas(cli, monkeypatch):
+    import re
+    f = dict(pj=2, pg=0, pe=0, pp=0, gf=0, gc=0, dg=0)
+    monkeypatch.setattr(queries, "tabla_anual", lambda tid: [
+        {"equipo": "Racing Club", "abrev": "RAC", "pts": 9, **f},
+        {"equipo": "Tigre", "abrev": "TIG", "pts": 6, **f}])
+    t = cli.get("/torneo/anual").text
+    assert re.search(r'<tr class="[^"]*\blib\b[^"]*">\s*<td', t)
+    assert re.search(r'<tr class="[^"]*\bdescenso\b[^"]*">\s*<td', t)

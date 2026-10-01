@@ -43,7 +43,7 @@
 
       {% for f in filas %}
 
-        <tr class="{{ 'corte' if corte and loop.index == corte }}{{ ' descenso' if f.descenso }}{{ ' empate' if f.empate_descenso }}{{ ' lib' if f.copa == 'libertadores' }}{{ ' sud' if f.copa == 'sudamericana' }}"></tr>
+        <tr class="{{ 'corte' if corte and loop.index == corte }}{{ ' descenso' if f.descenso }}{{ ' empate' if f.empate_descenso }}{{ ' lib' if f.copa == 'libertadores' }}{{ ' sud' if f.copa == 'sudamericana' }}">
           <td class="pos rank">
             {{ loop.index }}
           </td>
