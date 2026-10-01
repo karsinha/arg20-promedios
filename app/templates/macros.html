@@ -43,15 +43,12 @@
 
       {% for f in filas %}
 
-        <tr class="{{ 'corte' if corte and loop.index == corte }}{{ ' descenso' if f.descenso }}{{ ' empate' if f.empate_descenso }}"></tr>
-
+        <tr class="{{ 'corte' if corte and loop.index == corte }}{{ ' descenso' if f.descenso }}{{ ' empate' if f.empate_descenso }}{{ ' lib' if f.copa == 'libertadores' }}{{ ' sud' if f.copa == 'sudamericana' }}"></tr>
           <td class="pos rank">
             {{ loop.index }}
           </td>
 
-          <td class="t team-cell">
-            {{ escudo(f.equipo, f.abrev) }}
-          </td>
+          <td class="t team-cell">{{ escudo(f.equipo, f.abrev) }}{% if f.titulo %} <span class="estrella" title="{{ f.titulo }}">★</span>{% endif %}</td>
 
           <td>{{ f.pj }}</td>
           <td>{{ f.pg }}</td>

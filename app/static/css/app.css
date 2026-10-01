@@ -920,3 +920,58 @@ h1 span {
 .leyenda.aviso {
   color: var(--amber);
 }
+
+/* Zonas de copas en la tabla Anual */
+.standings-table tbody tr.lib td {
+  background: var(--blue-soft);
+}
+
+.standings-table tbody tr.lib td:first-child {
+  box-shadow: inset 3px 0 0 var(--blue);
+}
+
+.standings-table tbody tr.sud td {
+  background: var(--violet-soft);
+}
+
+.standings-table tbody tr.sud td:first-child {
+  box-shadow: inset 3px 0 0 var(--violet);
+}
+
+.estrella {
+  margin-left: 4px;
+  color: var(--amber);
+  font-size: 11px;
+}
+
+.refs {
+  margin: 12px 0 0;
+  padding: 0;
+
+  list-style: none;
+
+  color: var(--mut-2);
+  font-size: 11px;
+}
+
+.refs li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+
+  margin-top: 5px;
+}
+
+.ref {
+  flex: none;
+
+  width: 10px;
+  height: 10px;
+  margin-top: 3px;
+
+  border-radius: 3px;
+}
+
+.ref-lib { background: var(--blue); }
+.ref-sud { background: var(--violet); }
+.ref-desc { background: var(--red); }

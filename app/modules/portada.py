@@ -5,10 +5,23 @@ from fastapi.responses import RedirectResponse
 from app.core.templating import templates
 from app.modules.jugadores.router import contexto_jugadores
 from app.modules.seo import datos_seo
-from app.modules.torneo import descenso, modos, playoffs, queries
+from app.modules.torneo import copas, descenso, modos, playoffs, queries
 from app.modules.torneo.router import agrupar_por_zona, contexto_fixture, contexto_playoffs
 
 router = APIRouter()
+
+
+def campeones() -> tuple[dict, list]:
+    """({equipo: [torneos que gano]}, [torneos que todavia no tienen campeon])."""
+    ganados, pendientes = {}, []
+    for tipo in ("apertura", "clausura"):
+        etiqueta = tipo.capitalize()
+        c = playoffs.campeon(queries.playoffs(modos.resolver(tipo).torneo_id))
+        if c is None:
+            pendientes.append(etiqueta)
+        else:
+            ganados.setdefault(c["equipo"], []).append(etiqueta)
+    return ganados, pendientes
 
 
 def contexto_main(modo: str) -> dict:
@@ -18,7 +31,11 @@ def contexto_main(modo: str) -> dict:
     if modo in ("clausura", "apertura"):
         datos["zonas"] = agrupar_por_zona(queries.tabla_torneo(ctx.torneo_id))
     elif modo == "anual":
-        datos["filas"] = descenso.marcar(queries.tabla_anual(ctx.temporada_id), "pts")
+        ganados, pendientes = campeones()
+        marcadas = descenso.marcar(queries.tabla_anual(ctx.temporada_id), "pts")
+        datos["filas"] = copas.asignar(marcadas, ganados)
+        datos.update(campeones_info=[{"equipo": e, "torneos": " y ".join(t)} for e, t in ganados.items()],
+                     pendientes=pendientes, cupos_lib=copas.LIBERTADORES, cupos_sud=copas.SUDAMERICANA)
     elif modo == "playoffs":
         datos.update(contexto_playoffs("clausura"))
     else:

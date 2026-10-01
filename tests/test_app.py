@@ -127,3 +127,24 @@ def test_anual_marca_el_descenso(cli, monkeypatch):
         {"equipo": "Tigre", "abrev": "TIG", "pts": 6, **f}])
     t = cli.get("/torneo/anual").text
     assert "descenso empate" in t and "partido de desempate" in t
+
+
+
+def test_anual_con_campeon_y_zonas_de_copa(cli, monkeypatch):
+    f = dict(pj=2, pg=0, pe=0, pp=0, gf=0, gc=0, dg=0)
+    monkeypatch.setattr(queries, "tabla_anual", lambda tid: [
+        {"equipo": "Racing Club", "abrev": "RAC", "pts": 9, **f},
+        {"equipo": "Boca Juniors", "abrev": "BOC", "pts": 7, **f},
+        {"equipo": "Tigre", "abrev": "TIG", "pts": 6, **f}])
+    final = {"instancia": "final", "estado": "finalizado", "goles_local": 1, "goles_visitante": 0,
+             "pen_local": None, "pen_visitante": None, "hora_local": None,
+             "local": "Boca Juniors", "local_abrev": "BOC", "visitante": "Tigre", "visitante_abrev": "TIG"}
+    monkeypatch.setattr(queries, "playoffs", lambda tid: [final])
+    t = cli.get("/torneo/anual").text
+    assert "★" in t and "Boca Juniors (Apertura y Clausura)" in t
+    assert "Copa Libertadores" in t and "Copa Sudamericana" in t
+    assert "Todavía sin campeón" not in t
+
+
+def test_anual_avisa_si_falta_el_campeon(cli):
+    assert "Todavía sin campeón: Apertura y Clausura" in cli.get("/torneo/anual").text

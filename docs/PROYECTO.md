@@ -35,7 +35,7 @@ Filosofía: **datos confiables + herramientas útiles + experiencia rápida + co
 - [x] Marcador en vivo (`live.py` + refresco HTMX). **Sin probar en un partido real**: el nombre del campo id de `/events/live/` está asumido (`id` con fallback `event_id`); el primer tick con datos loguea las claves.
 - [x] Pestaña Playoffs (cuadro proyectado y real, penales). Validada con el Apertura 2026 (8 octavos y los 15 partidos coinciden).
 - [x] Apertura validado: las posiciones por zona reproducen los 8 cruces de octavos (incluye 4 empates de puntos resueltos por DG).
-- [x] Descenso: marca roja en Anual y Promedios (último puesto) y aviso de empate. Falta la calculadora.
+- [x] Zonas en la tabla Anual: Libertadores (campeones + 3 mejores que no sean campeones), Sudamericana (6 siguientes) y descenso (último). Promedios marca el último. Falta la calculadora.
 - [] Validar el resto de las tablas con `scripts/checks/cruce_tabla.py` (Clausura vs BSD; Anual vs CSV externo). Falta el desempate por goles a favor, que ningún caso real probó.
 - [ ] Todo lo demás está en el Roadmap de abajo.
 
@@ -129,3 +129,4 @@ tests/ · docs/ · compose.yaml · Makefile · requirements.txt
 - Penales en `player-stats` (¿cuentan como gol?).
 - Límites reales y términos de uso de BSD (7.500 req/día viene de un README ajeno).
 - Cómo filtra fechas `/events/` (`date_from`/`date_to` devolvieron partidos futuros).
+- Cupos a copas: el esquema usado (campeones de Apertura y Clausura + 3 de la Anual, 6 a Sudamericana) no está confirmado con el reglamento. Constantes en `torneo/copas.py`. Tampoco hay criterio de desempate definido para empates fuera del descenso.

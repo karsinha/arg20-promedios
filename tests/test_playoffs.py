@@ -56,3 +56,10 @@ def test_cuadro_real_del_apertura_2026():
 def test_empate_sin_penales_no_define_ganador():
     p = pj("round-of-16", "A", "B", 1, 1)
     assert playoffs._ganador(p) is None
+
+
+
+def test_campeon_es_el_ganador_de_la_final():
+    assert playoffs.campeon([pj("final", "River Plate", "Belgrano", 2, 3)])["equipo"] == "Belgrano"
+    assert playoffs.campeon([]) is None
+    assert playoffs.campeon([pj("final", "A", "B", 1, 1)]) is None

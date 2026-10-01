@@ -1,4 +1,33 @@
-<p class="leyenda">La marca roja señala el último puesto, que desciende.</p>
+{% if modo == 'anual' %}
+
+  <ul class="refs">
+    <li>
+      <i class="ref ref-lib"></i>
+      Copa Libertadores: los campeones y los {{ cupos_lib }} mejores de la tabla.
+      Si un campeón está entre ellos, el cupo pasa al siguiente.
+    </li>
+    <li><i class="ref ref-sud"></i> Copa Sudamericana: los {{ cupos_sud }} siguientes.</li>
+    <li><i class="ref ref-desc"></i> Último puesto: desciende.</li>
+  </ul>
+
+  {% if campeones_info %}
+    <p class="leyenda">
+      ★ Campeones:
+      {% for c in campeones_info %}{{ c.equipo }} ({{ c.torneos }}){{ ', ' if not loop.last }}{% endfor %}.
+    </p>
+  {% endif %}
+
+  {% if pendientes %}
+    <p class="leyenda aviso">
+      Todavía sin campeón: {{ pendientes|join(' y ') }}. Los cupos pueden cambiar cuando se defina.
+    </p>
+  {% endif %}
+
+{% else %}
+
+  <p class="leyenda">La marca roja señala el último puesto, que desciende.</p>
+
+{% endif %}
 
 {% if hay_empate_descenso %}
   <p class="leyenda aviso">

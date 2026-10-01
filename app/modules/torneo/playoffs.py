@@ -83,3 +83,10 @@ def cuadro(zonas: dict[str, list[dict]], jugados: list[dict]) -> list[list[dict]
         rondas.append([_nodo(prev[i]["ganador"], prev[i + 1]["ganador"], por[inst])
                        for i in range(0, len(prev), 2)])
     return rondas
+
+
+
+def campeon(jugados: list[dict]):
+    """{'equipo','abrev'} del ganador de la final, o None si todavia no se definio."""
+    final = next((p for p in jugados if p["instancia"] == "final"), None)
+    return _ganador(final)
