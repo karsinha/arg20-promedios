@@ -93,3 +93,14 @@
 :root[data-theme="dark"] .ov {
   scrollbar-color: #3a4d63 transparent;
 }
+
+
+:root[data-theme="dark"] {
+  --red: #ff7aa5;
+  --red-soft: rgba(255, 122, 165, 0.12);
+  --red-line: rgba(255, 122, 165, 0.4);
+
+  --amber: #f0b44c;
+  --amber-soft: rgba(240, 180, 76, 0.12);
+  --amber-line: rgba(240, 180, 76, 0.35);
+}

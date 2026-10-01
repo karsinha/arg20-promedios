@@ -8,6 +8,8 @@ from fastapi.testclient import TestClient
 from app.core import db
 from app.main import app
 from app.core.config import settings
+from app.modules.torneo import queries
+
 fila = dict(pj=2, pg=1, pe=1, pp=0, gf=3, gc=1, dg=2, pts=4)
 
 
@@ -114,3 +116,14 @@ def test_sitemap_y_robots(cli, monkeypatch):
     assert "<loc>https://ejemplo.com/torneo/playoffs</loc>" in s.text
     r = cli.get("/robots.txt").text
     assert "Disallow: /parcial/" in r and "Sitemap: https://ejemplo.com/sitemap.xml" in r
+
+
+
+
+def test_anual_marca_el_descenso(cli, monkeypatch):
+    f = dict(pj=2, pg=0, pe=0, pp=0, gf=0, gc=0, dg=0)
+    monkeypatch.setattr(queries, "tabla_anual", lambda tid: [
+        {"equipo": "Racing Club", "abrev": "RAC", "pts": 6, **f},
+        {"equipo": "Tigre", "abrev": "TIG", "pts": 6, **f}])
+    t = cli.get("/torneo/anual").text
+    assert "descenso empate" in t and "partido de desempate" in t

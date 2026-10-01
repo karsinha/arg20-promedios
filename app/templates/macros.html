@@ -43,7 +43,7 @@
 
       {% for f in filas %}
 
-        <tr{% if corte and loop.index == corte %} class="corte"{% endif %}></tr>
+        <tr class="{{ 'corte' if corte and loop.index == corte }}{{ ' descenso' if f.descenso }}{{ ' empate' if f.empate_descenso }}"></tr>
 
           <td class="pos rank">
             {{ loop.index }}

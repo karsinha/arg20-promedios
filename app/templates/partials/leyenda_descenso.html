@@ -1,0 +1,11 @@
+<p class="leyenda">La marca roja señala el último puesto, que desciende.</p>
+
+{% if hay_empate_descenso %}
+  <p class="leyenda aviso">
+    {% if modo == 'anual' %}
+      Hay empate de puntos en la zona de descenso: se define por partido de desempate, no por diferencia de gol.
+    {% else %}
+      Hay promedios iguales en la zona de descenso: el criterio de desempate no está confirmado en el reglamento.
+    {% endif %}
+  </p>
+{% endif %}

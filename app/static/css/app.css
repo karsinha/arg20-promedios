@@ -889,3 +889,34 @@ h1 span {
 .pie a {
   color: inherit;
 }
+
+/* Descenso */
+:root {
+  --red: #d6336c;
+  --red-soft: #fdeef4;
+  --red-line: #f3c2d3;
+
+  --amber: #b7791f;
+  --amber-soft: #fff6e0;
+  --amber-line: #f2dca6;
+}
+
+.standings-table tbody tr.descenso td {
+  background: var(--red-soft);
+}
+
+.standings-table tbody tr.descenso td:first-child {
+  box-shadow: inset 3px 0 0 var(--red);
+}
+
+.standings-table tbody tr.empate td {
+  background: var(--amber-soft);
+}
+
+.standings-table tbody tr.empate td:first-child {
+  box-shadow: inset 3px 0 0 var(--amber);
+}
+
+.leyenda.aviso {
+  color: var(--amber);
+}

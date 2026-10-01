@@ -35,7 +35,8 @@ Filosofía: **datos confiables + herramientas útiles + experiencia rápida + co
 - [x] Marcador en vivo (`live.py` + refresco HTMX). **Sin probar en un partido real**: el nombre del campo id de `/events/live/` está asumido (`id` con fallback `event_id`); el primer tick con datos loguea las claves.
 - [x] Pestaña Playoffs (cuadro proyectado y real, penales). Validada con el Apertura 2026 (8 octavos y los 15 partidos coinciden).
 - [x] Apertura validado: las posiciones por zona reproducen los 8 cruces de octavos (incluye 4 empates de puntos resueltos por DG).
-- [ ] Validar el resto de las tablas con `scripts/checks/cruce_tabla.py` (Clausura vs BSD; Anual vs CSV externo). Falta el desempate por goles a favor, que ningún caso real probó.
+- [x] Descenso: marca roja en Anual y Promedios (último puesto) y aviso de empate. Falta la calculadora.
+- [] Validar el resto de las tablas con `scripts/checks/cruce_tabla.py` (Clausura vs BSD; Anual vs CSV externo). Falta el desempate por goles a favor, que ningún caso real probó.
 - [ ] Todo lo demás está en el Roadmap de abajo.
 
 ## Roadmap (priorizado)

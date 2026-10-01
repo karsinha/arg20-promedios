@@ -63,6 +63,7 @@
         {% if filas %}
 
           {{ tabla_posiciones(filas) }}
+          {% include "partials/leyenda_descenso.html" %}
 
         {% else %}
 
@@ -71,6 +72,7 @@
           </p>
 
         {% endif %}
+
 
       {% elif modo == 'playoffs' %}
 
@@ -100,7 +102,7 @@
 
               {% for f in filas %}
 
-                <tr>
+                <tr class="{{ 'descenso' if f.descenso }}{{ ' empate' if f.empate_descenso }}">
 
                   <td class="pos rank">
                     {{ loop.index }}
@@ -128,6 +130,8 @@
           </table>
 
         </div>
+
+        {% include "partials/leyenda_descenso.html" %}
 
       {% endif %}
 
