@@ -7,8 +7,17 @@
       Si un campeón está entre ellos, el cupo pasa al siguiente.
     </li>
     <li><i class="ref ref-sud"></i> Copa Sudamericana: los {{ cupos_sud }} siguientes.</li>
-    <li><i class="ref ref-desc"></i> Último puesto: desciende.</li>
+    <li>
+      <i class="ref ref-desc"></i>
+      Desciende el último de la Anual (sin contar al que ya baja por promedio) y el peor promedio.
+    </li>
   </ul>
+
+  {% if traspaso %}
+    <p class="leyenda aviso">
+      {{ traspaso.sale }} ya desciende por promedio, así que el descenso de la Anual pasa a {{ traspaso.entra }}.
+    </p>
+  {% endif %}
 
   {% if campeones_info %}
     <p class="leyenda">

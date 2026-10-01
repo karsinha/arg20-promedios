@@ -32,8 +32,12 @@ def contexto_main(modo: str) -> dict:
         datos["zonas"] = agrupar_por_zona(queries.tabla_torneo(ctx.torneo_id))
     elif modo == "anual":
         ganados, pendientes = campeones()
-        marcadas = descenso.marcar(queries.tabla_anual(ctx.temporada_id), "pts")
+        # Promedios se resuelve primero: su descendido sale del pool de la Anual.
+        baja_prom = {f["abrev"] for f in descenso.marcar(queries.tabla_promedios(), "promedio") if f["descenso"]}
+        tabla = queries.tabla_anual(ctx.temporada_id)
+        marcadas = descenso.marcar(tabla, "pts", excluidos=baja_prom)
         datos["filas"] = copas.asignar(marcadas, ganados)
+        datos["traspaso"] = descenso.traspaso(tabla, "pts", baja_prom)
         datos.update(campeones_info=[{"equipo": e, "torneos": " y ".join(t)} for e, t in ganados.items()],
                      pendientes=pendientes, cupos_lib=copas.LIBERTADORES, cupos_sud=copas.SUDAMERICANA)
     elif modo == "playoffs":
