@@ -226,7 +226,6 @@ def sync_stats(conn, cur, eq, resync_days, max_matches):
         ps = (get(f"/events/{pext}/player-stats/") or {}).get("player_stats")
         if not ps:      # None (error/404) o lista vacia: contar el intento y no tocar lo que ya hubiera
             cur.execute("UPDATE partido SET stats_intentos = stats_intentos + 1 WHERE id = %s", (pid,))
-            cur.execute("UPDATE partido SET stats_ok = true WHERE id = %s", (pid,))
             conn.commit()
             log.warning("sin player-stats para partido %s", pext)
             continue
@@ -263,6 +262,7 @@ def sync_stats(conn, cur, eq, resync_days, max_matches):
             # Confirmado a mano en 2 partidos (Rio Cuarto 0-1 Ind. Rivadavia y River 0-1 Rosario Central).
             en_contra += (gl - gl_bsd) + (gv - gv_bsd)
             log.debug("partido %s: %d gol(es) en contra sin jugador", pext, (gl - gl_bsd) + (gv - gv_bsd))
+            cur.execute("UPDATE partido SET stats_ok = true WHERE id = %s", (pid,))
         conn.commit()                       # guardar partido a partido: se ve el avance y un corte no pierde todo
         log.info("[%d/%d] partido %s listo", i, len(pend), pext)
     log.info("stats listas. anomalias de goles: %d | goles en contra sin jugador: %d", desajustes, en_contra)
