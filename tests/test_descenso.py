@@ -71,3 +71,38 @@ def test_estados_promedios_con_fracciones_exactas():
 def test_estados_sin_zona():
     assert descenso.estados([], []) == []
     assert descenso.estados([1], [4]) == [None]
+
+def tabla_ab(*datos):
+    return [{"equipo": a, "abrev": a, "pts": p} for a, p in datos]
+
+
+def test_el_que_baja_por_promedio_no_ocupa_lugar_en_la_anual():
+    filas = tabla_ab(("A", 30), ("B", 20), ("C", 10))
+    r = descenso.marcar(filas, "pts", excluidos={"C"})
+    assert [f["descenso"] for f in r] == [False, True, False]
+    assert [f["descenso_promedio"] for f in r] == [False, False, True]
+    assert descenso.margen(filas, "pts", excluidos={"C"}) == 10
+    assert [f["descenso"] for f in descenso.marcar(filas, "pts", excluidos={"A"})] == [False, False, True]
+
+
+def test_empate_en_la_anual_ignora_al_excluido():
+    filas = tabla_ab(("A", 30), ("B", 12), ("C", 12), ("D", 5))
+    r = descenso.marcar(filas, "pts", excluidos={"D"})
+    assert [f["descenso"] for f in r] == [False, False, True, False]
+    assert [f["empate_descenso"] for f in r] == [False, True, True, False]
+
+
+def test_traspaso():
+    filas = tabla_ab(("A", 30), ("B", 20), ("C", 10))
+    assert descenso.traspaso(filas, "pts", {"C"}) == {"sale": "C", "entra": "B"}
+    assert descenso.traspaso(filas, "pts", {"A"}) is None
+    assert descenso.traspaso(filas, "pts") is None
+
+
+def test_estados_anual_con_el_cruce_de_promedios():
+    from fractions import Fraction as F
+    ab, mins, maxs = ["A", "B", "C"], [F(60), F(40), F(10)], [F(66), F(46), F(16)]
+    assert descenso.estados_anual(ab, mins, maxs, set(), set()) == ["salvado", None, "condenado"]
+    assert descenso.estados_anual(ab, mins, maxs, set(), {"C"}) == ["salvado", "salvado", "condenado"]
+    # C baja por promedio: el descenso de la Anual pasa a B
+    assert descenso.estados_anual(ab, mins, maxs, {"C"}, set()) == ["salvado", "condenado", "condenado"]

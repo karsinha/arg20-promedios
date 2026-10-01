@@ -9,29 +9,68 @@ from fractions import Fraction
 CUPOS = 1
 
 
-def marcar(filas: list[dict], clave: str, cupos: int = CUPOS) -> list[dict]:
-    """Copia de las filas con `pos`, `descenso` y `empate_descenso`.
+def marcar(filas: list[dict], clave: str, cupos: int = CUPOS, excluidos=frozenset()) -> list[dict]:
+    """Copia de las filas con `pos`, `descenso`, `descenso_promedio` y `empate_descenso`.
 
-    Descienden los ultimos `cupos`. Si el ultimo que se salva empata en `clave` con el primero que desciende,
-    todos los que tienen ese valor quedan con empate_descenso=True."""
-    n = len(filas)
+    `excluidos`: abreviaturas que ya descienden por otra tabla (en la Anual, el peor promedio). No ocupan lugar:
+    descienden los ultimos `cupos` de los que quedan. Si el ultimo que se salva empata en `clave` con el primero
+    que desciende, todos los que tienen ese valor quedan con empate_descenso=True."""
+    pool = [i for i, f in enumerate(filas) if f.get("abrev") not in excluidos]
+    n = len(pool)
     corte = n - cupos
     hay_zona = n > cupos
-    res = [{**f, "pos": i + 1, "descenso": hay_zona and i >= corte, "empate_descenso": False}
-           for i, f in enumerate(filas)]
-    if hay_zona and corte >= 1 and filas[corte - 1][clave] == filas[corte][clave]:
-        valor = filas[corte][clave]
+    bajan = set(pool[corte:]) if hay_zona else set()
+    res = [{**f, "pos": i + 1, "descenso": i in bajan, "descenso_promedio": f.get("abrev") in excluidos,
+            "empate_descenso": False} for i, f in enumerate(filas)]
+    if hay_zona and corte >= 1 and filas[pool[corte - 1]][clave] == filas[pool[corte]][clave]:
+        valor = filas[pool[corte]][clave]
         for r in res:
-            r["empate_descenso"] = r[clave] == valor
+            r["empate_descenso"] = r[clave] == valor and not r["descenso_promedio"]
     return res
 
 
-def margen(filas: list[dict], clave: str, cupos: int = CUPOS):
-    """Distancia entre el primero que se salva y el primero que desciende (None si no hay zona)."""
-    n = len(filas)
+def margen(filas: list[dict], clave: str, cupos: int = CUPOS, excluidos=frozenset()):
+    """Distancia entre el primero que se salva y el primero que desciende, sin contar a los excluidos."""
+    pool = [f for f in filas if f.get("abrev") not in excluidos]
+    n = len(pool)
     if n <= cupos:
         return None
-    return filas[n - cupos - 1][clave] - filas[n - cupos][clave]
+    return pool[n - cupos - 1][clave] - pool[n - cupos][clave]
+
+
+def traspaso(filas: list[dict], clave: str, excluidos=frozenset()):
+    """Si el que baja por otra tabla era justo el que bajaba aca, devuelve {'sale', 'entra'} (nombres); si no, None."""
+    if not excluidos:
+        return None
+    sale = next((f for f in marcar(filas, clave) if f["descenso"] and f["abrev"] in excluidos), None)
+    entra = next((f for f in marcar(filas, clave, excluidos=excluidos) if f["descenso"]), None)
+    return {"sale": sale["equipo"], "entra": entra["equipo"]} if sale and entra else None
+
+
+def estados_anual(abrevs: list[str], minimos: list, maximos: list, prom_condenados: set, prom_salvados: set) -> list:
+    """Estados de la Anual teniendo en cuenta que el que baja por promedio sale del pool. Un solo descenso por tabla.
+
+    Condenado: baja por promedio, o es el ultimo del pool aun sin contar a los condenados por promedio.
+    Salvado: tiene >= 2 equipos seguros por debajo (uno solo podria bajar por promedio y dejarlo ultimo),
+    o 1 que ya esta salvado en Promedios (seguira en el pool)."""
+    n = len(abrevs)
+    res = []
+    for i, a in enumerate(abrevs):
+        if n <= 1:
+            res.append(None)
+            continue
+        if a in prom_condenados:
+            res.append("condenado")
+            continue
+        otros = [j for j in range(n) if j != i and abrevs[j] not in prom_condenados]
+        debajo = [abrevs[j] for j in range(n) if j != i and maximos[j] < minimos[i]]
+        if otros and all(minimos[j] > maximos[i] for j in otros):
+            res.append("condenado")
+        elif len(debajo) >= 2 or any(d in prom_salvados for d in debajo):
+            res.append("salvado")
+        else:
+            res.append(None)
+    return res
 
 def cotas_pts(filas: list[dict], restantes: dict[str, int]):
     """(minimos, maximos) de los puntos finales de cada fila de la Anual.
