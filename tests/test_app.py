@@ -14,6 +14,8 @@ fila = dict(pj=2, pg=1, pe=1, pp=0, gf=3, gc=1, dg=2, pts=4)
 
 
 def falsa(sql, params=None):
+    if "FROM equipo WHERE slug IS NOT NULL" in sql:
+        return [{"slug": "river"}]
     if "MAX(actualizado_en)" in sql:
         return [{"ultima": datetime(2026, 9, 30, 14, 5)}]
     if "FROM torneo t" in sql:

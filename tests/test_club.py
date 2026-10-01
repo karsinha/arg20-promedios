@@ -91,3 +91,7 @@ def test_pagina_de_club(cli, monkeypatch):
 
 def test_club_inexistente(cli):
     assert cli.get("/club/nadie").status_code == 404
+
+
+def test_sitemap_incluye_los_clubes(cli):
+    assert "/club/river</loc>" in cli.get("/sitemap.xml").text

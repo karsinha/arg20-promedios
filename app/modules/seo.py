@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from fastapi.responses import Response
 
 from app.core.config import settings
+from app.modules.club import queries as club
 from app.modules.torneo import modos
 
 router = APIRouter(include_in_schema=False)
@@ -30,7 +31,8 @@ def datos_seo(modo: str) -> dict:
 
 @router.get("/sitemap.xml")
 def sitemap():
-    urls = "".join(f"<url><loc>{url_absoluta(modos.url_modo(m))}</loc></url>" for m in modos.ETIQUETAS)
+    rutas = [modos.url_modo(m) for m in modos.ETIQUETAS] + [f"/club/{s}" for s in club.slugs()]
+    urls = "".join(f"<url><loc>{url_absoluta(r)}</loc></url>" for r in rutas)
     xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
            f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>')
     return Response(xml, media_type="application/xml")

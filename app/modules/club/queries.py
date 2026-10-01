@@ -37,3 +37,7 @@ def top_equipo(temporada_id: int, equipo_id: int, tipo: str, limite: int = 5) ->
             FROM v_stats_jugador_anual v
             WHERE v.temporada_id = %s AND v.equipo_id = %s AND v.{a} > 0
             ORDER BY pos, v.nombre LIMIT %s""", (temporada_id, equipo_id, limite))
+
+
+def slugs() -> list[str]:
+    return [f["slug"] for f in db.consultar("SELECT slug FROM equipo WHERE slug IS NOT NULL ORDER BY slug")]
