@@ -52,7 +52,7 @@
       {% if promedios.margen_txt %}
       <p class="leyenda">
         Descienden dos equipos: el peor promedio y el último de la Anual. Si el peor promedio también es último de la Anual,
-        el descenso de la Anual pasa al siguiente. «Salvado» vale para cada tabla por separado.
+        el descenso de la Anual pasa al siguiente. «Salvado» y «Desciende» valen para cada tabla por separado.
       </p>
       {% endif %}
       {% if promedios.hay_empate %}
@@ -67,6 +67,9 @@
   Rest.: partidos de zona que le faltan a cada equipo según el fixture cargado.
   «Salvado» y «Desciende» son matemáticos: se calculan suponiendo que el equipo gana (o pierde) todo lo que le queda
   y que sus rivales hacen lo contrario, y solo cuentan cuando la diferencia es estricta.
+  «Necesita N de M»: puntos que debe sumar, de los M que le quedan, para quedar salvado aunque todos sus rivales
+  ganen todo lo que les falta (alcanza con eso, pero a veces se salva con menos). «Depende de otros»: aunque gane
+  todo, su salvación depende de resultados ajenos.
 </p>
 <p class="leyenda">
   Desciende el último de la Anual y el peor promedio. Si un mismo equipo fuera último de ambas tablas,

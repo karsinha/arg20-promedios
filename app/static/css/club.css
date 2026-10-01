@@ -66,3 +66,4 @@ a.tm:hover > span:last-child { text-decoration: underline; }
 .badge-salvado { background: var(--green-soft); border-color: var(--green-line); color: var(--green); }
 .leyenda a { color: var(--blue); font-weight: 700; text-decoration: none; }
 .leyenda a:hover { text-decoration: underline; }
+.necesita { color: var(--mut); font-family: "Manrope", sans-serif; font-size: 10px; font-weight: 700; white-space: nowrap; }

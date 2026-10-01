@@ -11,9 +11,10 @@ router = APIRouter()
 ZONA_VISIBLE = 6      # cuantos equipos del fondo de cada tabla se muestran
 
 
-def _ui(filas, clave, restantes, estados, excluidos=frozenset()) -> dict:
+def _ui(filas, clave, restantes, estados, necesidades, excluidos=frozenset()) -> dict:
     marcadas = descenso.marcar(filas, clave, excluidos=excluidos)
-    ui = [{**f, "restantes": restantes.get(f["abrev"], 0), "matematico": e} for f, e in zip(marcadas, estados)]
+    ui = [{**f, "restantes": restantes.get(f["abrev"], 0), "matematico": e, "necesidad": n}
+          for f, e, n in zip(marcadas, estados, necesidades)]
     m = descenso.margen(filas, clave, excluidos=excluidos)
     texto = None if m is None else (f"{m} pts" if clave == "pts" else f"{float(m):.3f} de promedio")
     return {"filas": ui[-ZONA_VISIBLE:], "margen_txt": texto,
@@ -35,8 +36,10 @@ def contexto_descenso() -> dict:
 
     min_a, max_a = descenso.cotas_pts(anual, restantes)
     est_a = descenso.estados_anual([f["abrev"] for f in anual], min_a, max_a, condenados, salvados)
-    return {"anual": _ui(anual, "pts", restantes, est_a, baja_prom),
-            "promedios": _ui(prom, "promedio", restantes, est_p)}
+    nec_a = descenso.necesidad_anual(anual, restantes, condenados, salvados)
+    nec_p = descenso.necesidad_promedio(prom, restantes)
+    return {"anual": _ui(anual, "pts", restantes, est_a, nec_a, baja_prom),
+            "promedios": _ui(prom, "promedio", restantes, est_p, nec_p)}
 
 
 @router.get("/descenso")

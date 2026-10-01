@@ -39,3 +39,14 @@ def test_pagina_descenso(cli):
 def test_descenso_en_el_sitemap_y_enlazado(cli):
     assert "/descenso</loc>" in cli.get("/sitemap.xml").text
     assert 'href="/descenso"' in cli.get("/torneo/anual").text
+
+
+def test_pagina_muestra_cuanto_necesita(cli, monkeypatch):
+    def prom(eq, ab, p):
+        return {"equipo": eq, "abrev": ab, "slug": ab.lower(), "pts_2024": p, "pts_2025": p, "pts_2026": p,
+                "pj": 30, "promedio": Decimal(p * 3) / 30}
+    monkeypatch.setattr(queries, "tabla_promedios", lambda: [
+        prom("Racing Club", "RAC", 20), prom("Boca Juniors", "BOC", 10), prom("Tigre", "TIG", 9)])
+    monkeypatch.setattr(queries, "partidos_restantes", lambda anio: {"RAC": 3, "BOC": 3, "TIG": 3})
+    t = cli.get("/descenso").text
+    assert "Necesita 7 de 9" in t and "Depende de otros" in t
