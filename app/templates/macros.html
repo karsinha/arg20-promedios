@@ -15,7 +15,7 @@
 {%- endmacro %}
 
 
-{% macro tabla_posiciones(filas) %}
+{% macro tabla_posiciones(filas, corte=none) %}
 
 <div class="ov">
 
@@ -43,7 +43,7 @@
 
       {% for f in filas %}
 
-        <tr>
+        <tr{% if corte and loop.index == corte %} class="corte"{% endif %}></tr>
 
           <td class="pos rank">
             {{ loop.index }}

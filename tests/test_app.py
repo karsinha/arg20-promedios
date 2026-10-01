@@ -12,6 +12,8 @@ fila = dict(pj=2, pg=1, pe=1, pp=0, gf=3, gc=1, dg=2, pts=4)
 
 
 def falsa(sql, params=None):
+    if "MAX(actualizado_en)" in sql:
+        return [{"ultima": datetime(2026, 9, 30, 14, 5)}]
     if "FROM torneo t" in sql:
         return [{"id": 1, "tipo": "apertura", "temporada_id": 1}, {"id": 2, "tipo": "clausura", "temporada_id": 1}]
     if "v_tabla_torneo" in sql:
@@ -51,6 +53,8 @@ def test_portada_clausura(cli):
     assert "Zona A" in r.text and "Zona B" in r.text and "River Plate" in r.text
     assert "Fecha 2" in r.text and "2 - 1" in r.text and "07/10 20:00" in r.text
     assert "J. Candia" in r.text
+    assert "8.º puesto" in r.text
+    assert "Última actualización: 30/09/2026 14:05" in r.text
 
 
 def test_modos(cli):
@@ -72,3 +76,10 @@ def test_playoffs_proyectado(cli):
     r = cli.get("/modo/playoffs").text
     assert "Octavos" in r and "Semifinales" in r and "1A" in r and "8B" in r
     assert "Apertura" in cli.get("/torneo/playoffs?torneo=apertura").text
+
+
+
+
+def test_tema(cli):
+    t = cli.get("/").text
+    assert "theme.css" in t and 'id="tema"' in t

@@ -41,7 +41,7 @@
             {{ 'Zona ' ~ zona if zona else 'Sin zona' }}
           </h3>
 
-          {{ tabla_posiciones(filas) }}
+          {{ tabla_posiciones(filas, clasifican) }}
 
         {% else %}
 
@@ -50,6 +50,12 @@
           </p>
 
         {% endfor %}
+
+        {% if zonas %}
+          <p class="leyenda">
+            La línea verde marca el 8.º puesto: clasifican a playoffs los 8 primeros de cada zona.
+          </p>
+        {% endif %}
 
 
       {% elif modo == 'anual' %}
@@ -71,7 +77,7 @@
         <div id="cuadro">
           {% include "partials/cuadro.html" %}
         </div>
-        
+
       {% else %}
 
         <div class="ov">

@@ -866,3 +866,26 @@ h1 span {
   }
 
 }
+
+/* Linea de clasificacion a playoffs */
+.standings-table tbody tr.corte td {
+  border-bottom: 2px solid var(--green-line);
+}
+
+.leyenda {
+  margin: 12px 0 0;
+  color: var(--mut-2);
+  font-size: 11px;
+}
+
+/* Pie */
+.pie {
+  margin-top: 28px;
+  color: var(--mut-2);
+  font-size: 11px;
+  text-align: center;
+}
+
+.pie a {
+  color: inherit;
+}

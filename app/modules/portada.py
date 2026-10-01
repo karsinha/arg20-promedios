@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request
 
 from app.core.templating import templates
 from app.modules.jugadores.router import contexto_jugadores
-from app.modules.torneo import modos, queries
+from app.modules.torneo import modos, playoffs, queries
 from app.modules.torneo.router import agrupar_por_zona, contexto_fixture, contexto_playoffs
 
 router = APIRouter()
@@ -11,7 +11,8 @@ router = APIRouter()
 
 def contexto_main(modo: str) -> dict:
     ctx = modos.resolver(modo)
-    datos = {"modo": modo, "etiquetas": modos.ETIQUETAS, "etiqueta": modos.ETIQUETAS[modo]}
+    datos = {"modo": modo, "etiquetas": modos.ETIQUETAS, "etiqueta": modos.ETIQUETAS[modo],
+             "clasifican": playoffs.CLASIFICAN}
     if modo in ("clausura", "apertura"):
         datos["zonas"] = agrupar_por_zona(queries.tabla_torneo(ctx.torneo_id))
     elif modo == "anual":
@@ -28,7 +29,8 @@ def contexto_main(modo: str) -> dict:
 @router.get("/")
 def portada(request: Request, modo: str = "clausura"):
     return templates.TemplateResponse(
-        request, "home.html", {"anio": modos.ANIO, **contexto_main(modo)})
+        request, "home.html",
+        {"anio": modos.ANIO, "actualizado": queries.ultima_actualizacion(), **contexto_main(modo)})
 
 
 @router.get("/modo/{modo}")
