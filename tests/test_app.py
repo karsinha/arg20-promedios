@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 
 from app.core import db
 from app.main import app
-
+from app.core.config import settings
 fila = dict(pj=2, pg=1, pe=1, pp=0, gf=3, gc=1, dg=2, pts=4)
 
 
@@ -93,3 +93,24 @@ def test_playoffs_proyectado(cli):
 def test_tema(cli):
     t = cli.get("/").text
     assert "theme.css" in t and 'id="tema"' in t
+
+
+
+
+def test_seo(cli, monkeypatch):
+    monkeypatch.setattr(settings, "sitio_url", "https://ejemplo.com")
+    t = cli.get("/torneo/anual").text
+    assert "<title>Tabla Anual 2026 · Liga Profesional Argentina</title>" in t
+    assert '<link rel="canonical" href="https://ejemplo.com/torneo/anual">' in t
+    assert 'property="og:title"' in t and 'name="description"' in t
+    assert '<link rel="canonical" href="https://ejemplo.com/">' in cli.get("/").text
+
+
+def test_sitemap_y_robots(cli, monkeypatch):
+    monkeypatch.setattr(settings, "sitio_url", "https://ejemplo.com/")
+    s = cli.get("/sitemap.xml")
+    assert s.headers["content-type"].startswith("application/xml")
+    assert "<loc>https://ejemplo.com/</loc>" in s.text
+    assert "<loc>https://ejemplo.com/torneo/playoffs</loc>" in s.text
+    r = cli.get("/robots.txt").text
+    assert "Disallow: /parcial/" in r and "Sitemap: https://ejemplo.com/sitemap.xml" in r

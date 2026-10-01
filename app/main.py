@@ -5,8 +5,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.core import db
-from app.modules import parcial, portada
-
+from app.modules import parcial, portada, seo
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,6 +18,7 @@ app = FastAPI(title="Futbol Argentina", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")
 app.include_router(portada.router)
 app.include_router(parcial.router)
+app.include_router(seo.router)
 
 
 @app.get("/salud", include_in_schema=False)

@@ -83,7 +83,7 @@ Estructura a diseñar ya, aunque se implemente por etapas:
 /descenso  /simulador
 /historial/<anio>
 ```
-Hoy: `/`, `/modo/{modo}`, `/torneo/fixture`, `/torneo/playoffs`, `/jugadores`. Los fragmentos HTMX pueden quedar bajo un prefijo (`/parcial/...`) para no mezclarlos con las páginas indexables.
+Hoy: `/`, `/modo/{modo}`, `/torneo/fixture`, `/torneo/playoffs`, `/jugadores`, `/sitemap.xml`, `/robots.txt`;. Los fragmentos HTMX pueden quedar bajo un prefijo (`/parcial/...`) para no mezclarlos con las páginas indexables.
 
 ## Estructura del repo
 ```

@@ -1,5 +1,19 @@
 {% extends "base.html" %}
 
+{% block titulo %}{{ seo.titulo }}{% endblock %}
+
+{% block meta %}
+  <meta name="description" content="{{ seo.descripcion }}">
+  <link rel="canonical" href="{{ seo.url }}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+  <meta property="og:site_name" content="Fútbol Argentina">
+  <meta property="og:title" content="{{ seo.titulo }}">
+  <meta property="og:description" content="{{ seo.descripcion }}">
+  <meta property="og:url" content="{{ seo.url }}">
+  <meta name="twitter:card" content="summary">
+{% endblock %}
+
 {% block contenido %}
 
 <header class="hero">

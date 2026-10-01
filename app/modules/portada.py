@@ -4,6 +4,7 @@ from fastapi.responses import RedirectResponse
 
 from app.core.templating import templates
 from app.modules.jugadores.router import contexto_jugadores
+from app.modules.seo import datos_seo
 from app.modules.torneo import modos, playoffs, queries
 from app.modules.torneo.router import agrupar_por_zona, contexto_fixture, contexto_playoffs
 
@@ -28,9 +29,11 @@ def contexto_main(modo: str) -> dict:
 
 
 def pagina(request: Request, modo: str):
+    contexto = contexto_main(modo)            # lanza 404 si el modo no existe
     return templates.TemplateResponse(
         request, "home.html",
-        {"anio": modos.ANIO, "actualizado": queries.ultima_actualizacion(), **contexto_main(modo)})
+        {"anio": modos.ANIO, "actualizado": queries.ultima_actualizacion(),
+         "seo": datos_seo(modo), **contexto})
 
 
 @router.get("/")
