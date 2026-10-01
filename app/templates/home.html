@@ -22,4 +22,11 @@
   {% include "partials/main.html" %}
 </div>
 
+<footer class="pie">
+  <p>
+    Datos: <a href="https://sports.bzzoiro.com" target="_blank" rel="noopener">BSD</a>.
+    {% if actualizado %}Última actualización: {{ actualizado.strftime('%d/%m/%Y %H:%M') }} (hora de Argentina).{% endif %}
+  </p>
+</footer>
+
 {% endblock %}

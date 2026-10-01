@@ -75,3 +75,12 @@ def playoffs(torneo_id: int) -> list[dict]:
            FROM partido p JOIN equipo l ON l.id = p.local_id JOIN equipo v ON v.id = p.visitante_id
            WHERE p.torneo_id = %s AND p.fase = 'playoff' AND NOT p.reprogramado
            ORDER BY p.fecha_hora, p.id""", (torneo_id,))
+
+
+
+
+def ultima_actualizacion():
+    """Hora (Argentina) de la ultima vez que el sync toco un partido."""
+    filas = db.consultar(
+        """SELECT MAX(actualizado_en) AT TIME ZONE 'America/Argentina/Buenos_Aires' AS ultima FROM partido""")
+    return filas[0]["ultima"] if filas else None
