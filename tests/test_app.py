@@ -26,6 +26,8 @@ def falsa(sql, params=None):
         return [{"fecha_nro": n} for n in (1, 2, 3)]
     if "MAX(fecha_nro)" in sql:
         return [{"fecha": 2}]
+    if "fase = 'playoff'" in sql:
+        return []
     if "FROM partido p" in sql:
         return [{"id": 1, "estado": "finalizado", "goles_local": 2, "goles_visitante": 1, "hora_local": None,
                  "local": "Lanús", "local_abrev": "LAN", "visitante": "Tigre", "visitante_abrev": "TIG"},
@@ -64,3 +66,9 @@ def test_fixture_y_jugadores(cli):
 
 def test_modo_invalido(cli):
     assert cli.get("/modo/xxx").status_code == 404
+
+
+def test_playoffs_proyectado(cli):
+    r = cli.get("/modo/playoffs").text
+    assert "Octavos" in r and "Semifinales" in r and "1A" in r and "8B" in r
+    assert "Apertura" in cli.get("/torneo/playoffs?torneo=apertura").text

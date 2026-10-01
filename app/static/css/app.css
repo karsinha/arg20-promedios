@@ -605,6 +605,13 @@ h1 span {
 .m i.vivo { color: #d6336c; border-color: #f3c2d3; background: #fdeef4; }
 
 
+.seed {
+  margin: 0 4px;
+  color: var(--mut-2);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+}
+
 /* =========================================================
    NAV
    ========================================================= */

@@ -6,8 +6,8 @@ from fastapi import HTTPException
 from app.core import db
 
 ANIO = 2026
-ETIQUETAS = {"clausura": "Clausura", "apertura": "Apertura", "anual": "Anual", "promedios": "Promedios"}
-
+ETIQUETAS = {"clausura": "Clausura", "apertura": "Apertura", "anual": "Anual", "promedios": "Promedios",
+             "playoffs": "Playoffs"}
 
 @dataclass(frozen=True)
 class Contexto:

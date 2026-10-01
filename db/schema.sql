@@ -64,6 +64,8 @@ CREATE TABLE partido (
   reprogramado     BOOLEAN NOT NULL DEFAULT false,   -- true = original postergado que ya tiene un reemplazo con otro id
   stats_ok         BOOLEAN NOT NULL DEFAULT false,   -- player-stats bajadas con datos
   stats_intentos   INT NOT NULL DEFAULT 0,           -- intentos sin datos (tope en sync_bsd.py)
+  pen_local        INT,                              -- definicion por penales (solo playoffs empatados)
+  pen_visitante    INT,
   actualizado_en   TIMESTAMPTZ NOT NULL DEFAULT now(),
   CHECK (local_id <> visitante_id)
 );
@@ -97,9 +99,10 @@ CREATE TABLE puntos_historicos (
 );
 
 -- ---------------------------------------------------------------------------
--- VISTAS. SUPUESTO A VERIFICAR con el reglamento de la AFA: solo cuentan los
--- partidos de fase 'zona' (incluye interzonales) para tablas, Anual y Promedios;
--- los playoffs no suman. Si el reglamento dice otra cosa, se cambia aca.
+-- VISTAS. Reglamento LPF 2026: Anual y Promedios cuentan solo partidos de fase 'zona'
+-- (incluye interzonales); los playoffs no suman. Promedios = ultimas 3 temporadas (2024-2026).
+-- Ojo: el orden por dg/gf es de presentacion; un empate en puntos en zona de descenso
+-- se define con partido de desempate (art. 26.2 del reglamento), no por diferencia de gol.
 -- ---------------------------------------------------------------------------
 
 CREATE VIEW v_resultado_equipo AS

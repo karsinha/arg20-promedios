@@ -301,12 +301,38 @@ def sync_historicos(cur, eq):
         log.info("historicos %s: %d equipos cargados, %d fuera de la liga 2026 (omitidos)", anio, len(pj) - len(omitidos), len(omitidos))
 
 
+def penales(d):
+    """(local, visitante) de la definicion por penales, o (None, None)."""
+    p = (d or {}).get("penalty_shootout")
+    if isinstance(p, dict) and p.get("home") is not None and p.get("away") is not None:
+        return p["home"], p["away"]
+    return None, None
+
+
+def sync_penales(conn, cur, todos=False):
+    """Playoffs empatados sin penales cargados: pide el detalle una vez. Por defecto solo los ultimos 30 dias,
+    para no repetir llamadas de partidos que BSD nunca informa."""
+    cur.execute(
+        """SELECT id, ext_id FROM partido
+           WHERE fase = 'playoff' AND estado = 'finalizado' AND goles_local = goles_visitante
+             AND pen_local IS NULL AND (%s OR fecha_hora >= now() - interval '30 days')
+           ORDER BY fecha_hora""", (todos,))
+    for pid, ext in cur.fetchall():
+        pl, pv = penales(get(f"/events/{ext}/"))
+        if pl is None:
+            log.warning("playoff %s empatado sin penales en BSD", ext)
+            continue
+        cur.execute("UPDATE partido SET pen_local = %s, pen_visitante = %s WHERE id = %s", (pl, pv, pid))
+        log.info("playoff %s: penales %s-%s", ext, pl, pv)
+    conn.commit()
+
 # ---------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--historicos", action="store_true", help="cargar puntos de 2024 y 2025")
     ap.add_argument("--max-matches", type=int, help="maximo de partidos a los que bajar player-stats en esta corrida")
     ap.add_argument("--resync-days", type=int, default=0, help="rebajar stats de partidos terminados en los ultimos N dias")
+    ap.add_argument("--penales-todos", action="store_true", help="buscar penales de todos los playoffs empatados")  # NUEVA
     a = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
@@ -324,6 +350,7 @@ def main():
         torneos = asegurar_base(cur)
         eq = sync_equipos_y_partidos(cur, torneos, events)
         conn.commit()                       # partidos y equipos quedan guardados aunque falle lo siguiente
+        sync_penales(conn, cur, a.penales_todos)   # NUEVA
         if a.historicos:
             sync_historicos(cur, eq)
             conn.commit()

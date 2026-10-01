@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 
 from app.core.templating import templates
-from app.modules.torneo import modos, queries
+from app.modules.torneo import modos, playoffs, queries
 
 router = APIRouter(prefix="/torneo")
 
@@ -32,3 +32,18 @@ def fixture(request: Request, modo: str = "clausura", fecha: int | None = None):
     ctx = modos.resolver(modo)
     return templates.TemplateResponse(
         request, "partials/fixture.html", {"modo": modo, **contexto_fixture(ctx, fecha)})
+
+
+def contexto_playoffs(torneo: str = "clausura") -> dict:
+    if torneo not in ("apertura", "clausura"):
+        torneo = "clausura"
+    ctx = modos.resolver(torneo)
+    zonas = dict(agrupar_por_zona(queries.tabla_torneo(ctx.torneo_id)))
+    jugados = queries.playoffs(ctx.torneo_id)
+    return {"torneo": torneo, "rondas": playoffs.cuadro(zonas, jugados),
+            "proyectado": not any(p["instancia"] == "round-of-16" for p in jugados)}
+
+
+@router.get("/playoffs")
+def cuadro_playoffs(request: Request, torneo: str = "clausura"):
+    return templates.TemplateResponse(request, "partials/cuadro.html", contexto_playoffs(torneo))

@@ -1,0 +1,3 @@
+ALTER TABLE partido
+  ADD COLUMN IF NOT EXISTS pen_local     INT,
+  ADD COLUMN IF NOT EXISTS pen_visitante INT;

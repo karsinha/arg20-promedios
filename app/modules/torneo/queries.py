@@ -61,3 +61,17 @@ def partidos(torneo_id: int, fecha: int) -> list[dict]:
            FROM partido p JOIN equipo l ON l.id = p.local_id JOIN equipo v ON v.id = p.visitante_id
            WHERE p.torneo_id = %s AND p.fase = 'zona' AND p.fecha_nro = %s AND NOT p.reprogramado
            ORDER BY p.fecha_hora, p.id""", (torneo_id, fecha))
+
+
+def playoffs(torneo_id: int) -> list[dict]:
+    return db.consultar(
+        """SELECT p.instancia, p.estado::text AS estado, p.goles_local, p.goles_visitante,
+                  p.pen_local, p.pen_visitante,
+                  p.fecha_hora AT TIME ZONE 'America/Argentina/Buenos_Aires' AS hora_local,
+                  COALESCE(l.nombre_corto, l.nombre) AS local,
+                  COALESCE(l.abreviatura, UPPER(LEFT(l.nombre, 3))) AS local_abrev,
+                  COALESCE(v.nombre_corto, v.nombre) AS visitante,
+                  COALESCE(v.abreviatura, UPPER(LEFT(v.nombre, 3))) AS visitante_abrev
+           FROM partido p JOIN equipo l ON l.id = p.local_id JOIN equipo v ON v.id = p.visitante_id
+           WHERE p.torneo_id = %s AND p.fase = 'playoff' AND NOT p.reprogramado
+           ORDER BY p.fecha_hora, p.id""", (torneo_id,))

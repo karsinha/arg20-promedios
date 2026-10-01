@@ -43,3 +43,15 @@ def test_standings_rows_encuentra_filas_anidadas():
 def test_estado_en_vivo_y_suspendido():
     assert sync_bsd.estado(ev(status="inprogress")) == "en_juego"
     assert sync_bsd.estado(ev(status="abandoned")) == "suspendido"
+
+def test_cambios_de_tolera_respuestas_vacias():
+    cambios = pytest.importorskip("sync.cambios")
+    assert cambios.cambios_de(None) == []
+    assert cambios.cambios_de({"count": 0, "changes": []}) == []
+    assert len(cambios.cambios_de({"changes": [{"change": "status", "event_id": 1}]})) == 1
+
+
+def test_penales():
+    assert sync_bsd.penales({"penalty_shootout": {"home": 4, "away": 3}}) == (4, 3)
+    assert sync_bsd.penales({"penalty_shootout": None}) == (None, None)
+    assert sync_bsd.penales(None) == (None, None)

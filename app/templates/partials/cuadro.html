@@ -1,0 +1,33 @@
+{% from "macros.html" import escudo %}
+{% set titulos = ['Octavos', 'Cuartos', 'Semifinales', 'Final'] %}
+
+<div class="tabs" style="margin-bottom: 10px;">
+  {% for t, et in [('clausura', 'Clausura'), ('apertura', 'Apertura')] %}
+    <button class="{{ 'on' if t == torneo }}" hx-get="/torneo/playoffs?torneo={{ t }}" hx-target="#cuadro">
+      {{ et }}
+    </button>
+  {% endfor %}
+</div>
+
+{% if proyectado %}
+  <p class="vacio">Proyección con las posiciones actuales de cada zona.</p>
+{% endif %}
+
+{% for ronda in rondas %}
+  <h3 class="zona">{{ titulos[loop.index0] }}</h3>
+  <div class="fixture-list">
+    {% for n in ronda %}
+      <div class="m">
+        <span class="h">
+          {% if n.local %}{{ escudo(n.local.equipo, n.local.abrev) }}{% else %}<span class="tm">Por definir</span>{% endif %}
+          {% if n.local_pos %}<small class="seed">{{ n.local_pos }}</small>{% endif %}
+        </span>
+        <i>{{ n.marcador }}</i>
+        <span>
+          {% if n.visitante %}{{ escudo(n.visitante.equipo, n.visitante.abrev) }}{% else %}<span class="tm">Por definir</span>{% endif %}
+          {% if n.visitante_pos %}<small class="seed">{{ n.visitante_pos }}</small>{% endif %}
+        </span>
+      </div>
+    {% endfor %}
+  </div>
+{% endfor %}

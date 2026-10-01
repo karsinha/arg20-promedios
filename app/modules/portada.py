@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request
 from app.core.templating import templates
 from app.modules.jugadores.router import contexto_jugadores
 from app.modules.torneo import modos, queries
-from app.modules.torneo.router import agrupar_por_zona, contexto_fixture
+from app.modules.torneo.router import agrupar_por_zona, contexto_fixture, contexto_playoffs
 
 router = APIRouter()
 
@@ -16,6 +16,8 @@ def contexto_main(modo: str) -> dict:
         datos["zonas"] = agrupar_por_zona(queries.tabla_torneo(ctx.torneo_id))
     elif modo == "anual":
         datos["filas"] = queries.tabla_anual(ctx.temporada_id)
+    elif modo == "playoffs":
+        datos.update(contexto_playoffs("clausura"))
     else:
         datos["filas"] = queries.tabla_promedios()
     datos.update(contexto_fixture(ctx))
