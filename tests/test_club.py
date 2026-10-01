@@ -104,3 +104,16 @@ def test_el_escudo_linkea_al_club(cli, monkeypatch):
         {"equipo": "Racing Club", "abrev": "RAC", "slug": "racing", "pts": 6, **f}])
     assert 'href="/club/racing"' in cli.get("/torneo/anual").text
     assert 'href="/club/' not in cli.get("/torneo/playoffs").text    # sin slug en los datos falsos, no hay link roto
+
+
+def test_tarjeta_mi_club(cli):
+    t = cli.get("/parcial/club/river").text
+    assert "MI CLUB" in t and "Próximo partido" in t and "07/10 20:00" in t
+    assert "data-mi-club-quitar" in t and 'href="/club/river"' in t and "<html" not in t
+    assert cli.get("/parcial/club/nadie").status_code == 404
+
+
+def test_portada_y_club_tienen_los_ganchos_de_mi_club(cli):
+    home = cli.get("/").text
+    assert 'id="mi-club"' in home and "mi_club.js" in home
+    assert 'data-mi-club="river"' in cli.get("/club/river").text

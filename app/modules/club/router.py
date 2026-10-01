@@ -19,18 +19,25 @@ def puesto(filas: list[dict], abrev: str) -> dict | None:
     return None
 
 
-def contexto_club(slug: str) -> dict:
+def contexto_resumen(slug: str) -> dict:
+    """Equipo, resumen y posiciones, sin goleadores. Lo usan la pagina de club y la tarjeta 'Mi club'."""
     equipo = queries.equipo_por_slug(slug)
     if equipo is None:
         raise HTTPException(404, "Club desconocido")
     ctx = modos.resolver("clausura")
     zonas = dict(agrupar_por_zona(torneo.tabla_torneo(ctx.torneo_id)))
-    return {"equipo": equipo,
+    return {"equipo": equipo, "temporada_id": ctx.temporada_id,
             "resumen": resumen.resumen(queries.partidos_equipo(equipo["id"], modos.ANIO), equipo["id"]),
             "puesto_zona": puesto(zonas.get(equipo["zona"], []), equipo["abrev"]),
-            "puesto_anual": puesto(torneo.tabla_anual(ctx.temporada_id), equipo["abrev"]),
-            "goleadores": queries.top_equipo(ctx.temporada_id, equipo["id"], "goles"),
-            "asistidores": queries.top_equipo(ctx.temporada_id, equipo["id"], "asistencias")}
+            "puesto_anual": puesto(torneo.tabla_anual(ctx.temporada_id), equipo["abrev"])}
+
+
+def contexto_club(slug: str) -> dict:
+    datos = contexto_resumen(slug)
+    tid, eid = datos["temporada_id"], datos["equipo"]["id"]
+    datos.update(goleadores=queries.top_equipo(tid, eid, "goles"),
+                 asistidores=queries.top_equipo(tid, eid, "asistencias"))
+    return datos
 
 
 @router.get("/club/{slug}")

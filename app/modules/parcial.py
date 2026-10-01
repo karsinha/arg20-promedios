@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Request
 
 from app.core.templating import templates
+from app.modules.club.router import contexto_resumen
 from app.modules.jugadores.router import contexto_jugadores
 from app.modules.portada import contexto_main
 from app.modules.torneo import modos
@@ -32,3 +33,7 @@ def jugadores(request: Request, modo: str = "clausura", tipo: str = "goles"):
     ctx = modos.resolver(modo)
     return templates.TemplateResponse(
         request, "partials/jugadores.html", {"modo": modo, **contexto_jugadores(ctx, tipo)})
+
+@router.get("/club/{slug}")
+def mi_club(request: Request, slug: str):
+    return templates.TemplateResponse(request, "partials/mi_club.html", contexto_resumen(slug))

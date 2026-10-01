@@ -35,3 +35,23 @@ a.tm:hover > span:last-child { text-decoration: underline; }
 .m.res-g { box-shadow: inset 3px 0 0 var(--green); padding-left: 8px; }
 .m.res-e { box-shadow: inset 3px 0 0 var(--mut-2); padding-left: 8px; }
 .m.res-p { box-shadow: inset 3px 0 0 var(--red); padding-left: 8px; }
+
+/* Mi club */
+.mi-club { margin-bottom: 16px; }
+.mi-club:empty { display: none; }
+.mi-club-card h2 .tm { font-size: 17px; }
+.mi-club-body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.mi-club-link {
+  display: inline-block; margin-top: 12px; color: var(--blue); font-size: 12px; font-weight: 700; text-decoration: none;
+}
+.mi-club-link:hover { text-decoration: underline; }
+.mi-club-btn {
+  cursor: pointer; padding: 6px 11px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--card); color: var(--mut); font-family: "Manrope", sans-serif; font-size: 12px; font-weight: 700;
+}
+.mi-club-btn:hover { color: var(--tx); }
+.mi-club-btn.on { background: var(--green-soft); border-color: var(--green-line); color: var(--green); }
+.hero .mi-club-btn { margin-top: 12px; }
+@media (max-width: 640px) {
+  .mi-club-body { grid-template-columns: 1fr; gap: 6px; }
+}

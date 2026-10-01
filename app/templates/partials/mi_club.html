@@ -1,0 +1,32 @@
+{% from "macros.html" import escudo, partido_club %}
+
+<div class="card fixture-card mi-club-card">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">MI CLUB</span>
+      <h2>{{ escudo(equipo.equipo, equipo.abrev, equipo.slug) }}</h2>
+    </div>
+    <button type="button" class="mi-club-btn" data-mi-club-quitar>Quitar</button>
+  </div>
+
+  <div class="mi-club-body">
+    <div>
+      <ul class="datos">
+        <li><span>Clausura</span>{% if puesto_zona %}<b>{{ puesto_zona.pos }}.º de {{ puesto_zona.de }} en la Zona {{ equipo.zona }} · {{ puesto_zona.pts }} pts</b>{% else %}<b>—</b>{% endif %}</li>
+        <li><span>Anual</span>{% if puesto_anual %}<b>{{ puesto_anual.pos }}.º de {{ puesto_anual.de }} · {{ puesto_anual.pts }} pts</b>{% else %}<b>—</b>{% endif %}</li>
+      </ul>
+      <div class="forma">
+        {% for r in resumen.forma %}<span class="forma-{{ r|lower }}">{{ r }}</span>{% else %}<p class="vacio">Todavía no jugó.</p>{% endfor %}
+      </div>
+    </div>
+
+    <div>
+      <h3 class="zona" style="margin-top: 0;">Próximo partido</h3>
+      <div class="fixture-list">
+        {% if resumen.proximo %}{{ partido_club(resumen.proximo) }}{% else %}<p class="vacio">No hay partidos pendientes.</p>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <a class="mi-club-link" href="/club/{{ equipo.slug }}">Ver página del club →</a>
+</div>
