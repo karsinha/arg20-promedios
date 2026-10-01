@@ -4,26 +4,27 @@ Liga Profesional Argentina 2026 al estilo Promiedos. FastAPI + PostgreSQL + Jinj
 
 ## Estructura
 ```
-futbol-argentina/
+arg20-promedios/
 ├── app/                     # la web (solo LEE de la base)
 │   ├── main.py
 │   ├── core/                # config, pool de Postgres, Jinja2
 │   ├── modules/
-│   │   ├── portada.py       # compone los bloques de la home
-│   │   ├── torneo/          # tablas, fixture, selector (queries + router)
+│   │   ├── portada.py       # portada y pestañas (tabla + fixture + jugadores)
+│   │   ├── parcial.py       # fragmentos HTMX
+│   │   ├── seo.py · og.py   # SEO, sitemap y tarjetas Open Graph
+│   │   ├── descenso_pagina.py
+│   │   ├── torneo/          # tablas, playoffs, descenso, copas (queries + router + funciones puras)
+│   │   ├── club/            # página de club y "Mi club"
 │   │   └── jugadores/       # goleadores y asistidores
-│   │   # futuros: usuarios/, foro/ (mismo molde: queries.py + router.py)
-│   ├── templates/           # home.html, macros.html, partials/ (fragmentos HTMX)
-│   └── static/css/
-├── sync/sync_bsd.py         # job BSD -> PostgreSQL (unico que escribe)
-├── db/
-│   ├── schema.sql           # esquema completo (base vacia)
-│   └── migrations/          # cambios para bases ya creadas (001_...)
-├── scripts/                 # probe_bsd.py, equipos_abreviaturas.py, checks/
+│   ├── templates/           # home.html, club.html, macros.html, partials/
+│   └── static/              # css/, js/, crests/
+├── sync/                    # sync_bsd.py · live.py · cambios.py (unico que escribe)
+├── db/                      # schema.sql y migrations/
+├── deploy/                  # timers y servicios systemd
+├── scripts/                 # probe_bsd.py, equipos_abreviaturas.py, optimizar_escudos.py, checks/
 ├── tests/
 ├── docs/                    # PROYECTO.md, maqueta/home.html
 ├── compose.yaml · Makefile · requirements.txt · .env.example
-```
 
 ## Puesta en marcha
 ```bash

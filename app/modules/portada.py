@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import RedirectResponse
 
 from app.core.templating import templates
+from app.modules.descenso_pagina import contexto_descenso
 from app.modules.jugadores.router import contexto_jugadores
 from app.modules.seo import datos_seo
 from app.modules.torneo import copas, descenso, modos, playoffs, queries
@@ -42,12 +43,15 @@ def contexto_main(modo: str) -> dict:
                      pendientes=pendientes, cupos_lib=copas.LIBERTADORES, cupos_sud=copas.SUDAMERICANA)
     elif modo == "playoffs":
         datos.update(contexto_playoffs("clausura"))
+    elif modo == "descenso":
+        datos.update(contexto_descenso())
     else:
         datos["filas"] = descenso.marcar(queries.tabla_promedios(), "promedio")
     if modo in ("anual", "promedios"):
         datos["hay_empate_descenso"] = any(f["empate_descenso"] for f in datos["filas"])
-    datos.update(contexto_fixture(ctx))
-    datos.update(contexto_jugadores(ctx))
+    if modo != "descenso":                    # la pestania Descenso no muestra fixture ni jugadores
+        datos.update(contexto_fixture(ctx))
+        datos.update(contexto_jugadores(ctx))
     return datos
 
 
@@ -68,8 +72,13 @@ def portada(request: Request, modo: str | None = None):
     return pagina(request, "clausura")
 
 
+@router.get("/descenso")
+def descenso_pagina(request: Request):
+    return pagina(request, "descenso")
+
+
 @router.get("/torneo/{modo}")
 def torneo(request: Request, modo: str):
-    if modo == "clausura":                    # una sola URL para el mismo contenido
-        return RedirectResponse("/", status_code=301)
+    if modo in ("clausura", "descenso"):      # una sola URL para el mismo contenido
+        return RedirectResponse(modos.url_modo(modo), status_code=301)
     return pagina(request, modo)

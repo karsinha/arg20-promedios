@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.core import db
-from app.modules import descenso_pagina, og, parcial, portada, seo
+from app.modules import  og, parcial, portada, seo
 from app.modules.club import router as club
 
 @asynccontextmanager
@@ -21,7 +21,6 @@ app.include_router(portada.router)
 app.include_router(parcial.router)
 app.include_router(seo.router)
 app.include_router(club.router)
-app.include_router(descenso_pagina.router)
 app.include_router(og.router)
 
 

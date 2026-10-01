@@ -1,12 +1,7 @@
-"""Pagina /descenso: Anual y Promedios con margen, partidos restantes y estado matematico de cada equipo."""
-from fastapi import APIRouter, Request
-
-from app.core.templating import templates
-from app.modules.seo import datos_seo_descenso
+"""Contexto de la pestania Descenso (/descenso): Anual y Promedios con margen, partidos restantes,
+estado matematico y puntos necesarios de cada equipo."""
 from app.modules.torneo import descenso, modos
 from app.modules.torneo import queries as torneo
-
-router = APIRouter()
 
 ZONA_VISIBLE = 6      # cuantos equipos del fondo de cada tabla se muestran
 
@@ -40,11 +35,3 @@ def contexto_descenso() -> dict:
     nec_p = descenso.necesidad_promedio(prom, restantes)
     return {"anual": _ui(anual, "pts", restantes, est_a, nec_a, baja_prom),
             "promedios": _ui(prom, "promedio", restantes, est_p, nec_p)}
-
-
-@router.get("/descenso")
-def pagina_descenso(request: Request):
-    return templates.TemplateResponse(
-        request, "descenso.html",
-        {"anio": modos.ANIO, "actualizado": torneo.ultima_actualizacion(), "seo": datos_seo_descenso(),
-         **contexto_descenso()})

@@ -15,12 +15,15 @@
   </div>
 </div>
 
+{% if modo == 'descenso' %}
+
+  {% include "partials/descenso.html" %}
+
+{% else %}
 
 <div class="grid">
 
-  <!-- =========================================
-       IZQUIERDA — TABLA
-       ========================================= -->
+  <!-- IZQUIERDA — TABLA -->
   <section class="column-left">
 
     <div class="card standings-card">
@@ -32,23 +35,13 @@
         </div>
       </div>
 
-
       {% if modo in ('clausura', 'apertura') %}
 
         {% for zona, filas in zonas %}
-
-          <h3 class="zona">
-            {{ 'Zona ' ~ zona if zona else 'Sin zona' }}
-          </h3>
-
+          <h3 class="zona">{{ 'Zona ' ~ zona if zona else 'Sin zona' }}</h3>
           {{ tabla_posiciones(filas, clasifican) }}
-
         {% else %}
-
-          <p class="vacio">
-            Todavía no hay partidos jugados en este torneo.
-          </p>
-
+          <p class="vacio">Todavía no hay partidos jugados en este torneo.</p>
         {% endfor %}
 
         {% if zonas %}
@@ -57,22 +50,14 @@
           </p>
         {% endif %}
 
-
       {% elif modo == 'anual' %}
 
         {% if filas %}
-
           {{ tabla_posiciones(filas) }}
           {% include "partials/leyenda_descenso.html" %}
-
         {% else %}
-
-          <p class="vacio">
-            Todavía no hay partidos jugados este año.
-          </p>
-
+          <p class="vacio">Todavía no hay partidos jugados este año.</p>
         {% endif %}
-
 
       {% elif modo == 'playoffs' %}
 
@@ -83,9 +68,7 @@
       {% else %}
 
         <div class="ov">
-
           <table class="standings-table promedio-table">
-
             <thead>
               <tr>
                 <th class="pos">Pos</th>
@@ -97,38 +80,20 @@
                 <th class="points-head">Prom</th>
               </tr>
             </thead>
-
             <tbody>
-
               {% for f in filas %}
-
                 <tr class="{{ 'descenso' if f.descenso }}{{ ' empate' if f.empate_descenso }}">
-
-                  <td class="pos rank">
-                    {{ loop.index }}
-                  </td>
-
-                  <td class="t team-cell">
-                    {{ escudo(f.equipo, f.abrev, f.slug) }}
-                  </td>
-
+                  <td class="pos rank">{{ loop.index }}</td>
+                  <td class="t team-cell">{{ escudo(f.equipo, f.abrev, f.slug) }}</td>
                   <td>{{ f.pts_2024 }}</td>
                   <td>{{ f.pts_2025 }}</td>
                   <td>{{ f.pts_2026 }}</td>
                   <td>{{ f.pj }}</td>
-
-                  <td class="points">
-                    {{ '%.3f'|format(f.promedio) }}
-                  </td>
-
+                  <td class="points">{{ '%.3f'|format(f.promedio) }}</td>
                 </tr>
-
               {% endfor %}
-
             </tbody>
-
           </table>
-
         </div>
 
         {% include "partials/leyenda_descenso.html" %}
@@ -139,27 +104,19 @@
 
   </section>
 
-
-  <!-- =========================================
-       DERECHA — FIXTURE + JUGADORES
-       ========================================= -->
+  <!-- DERECHA — FIXTURE + JUGADORES -->
   <section class="column-right">
 
-    <div
-      class="card fixture-card"
-      id="fixture"
-    >
+    <div class="card fixture-card" id="fixture">
       {% include "partials/fixture.html" %}
     </div>
 
-
-    <div
-      class="card players-card"
-      id="jugadores"
-    >
+    <div class="card players-card" id="jugadores">
       {% include "partials/jugadores.html" %}
     </div>
 
   </section>
 
 </div>
+
+{% endif %}

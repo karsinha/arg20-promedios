@@ -50,3 +50,17 @@ def test_pagina_muestra_cuanto_necesita(cli, monkeypatch):
     monkeypatch.setattr(queries, "partidos_restantes", lambda anio: {"RAC": 3, "BOC": 3, "TIG": 3})
     t = cli.get("/descenso").text
     assert "Necesita 7 de 9" in t and "Depende de otros" in t
+
+def test_descenso_es_una_pestania(cli):
+    home = cli.get("/").text
+    assert 'hx-get="/parcial/modo/descenso"' in home and 'hx-push-url="/descenso"' in home
+    frag = cli.get("/parcial/modo/descenso").text
+    assert "Tabla Anual" in frag and "Tabla de Promedios" in frag and "<html" not in frag
+    r = cli.get("/torneo/descenso", follow_redirects=False)
+    assert r.status_code == 301 and r.headers["location"] == "/descenso"
+    r = cli.get("/?modo=descenso", follow_redirects=False)
+    assert r.status_code == 301 and r.headers["location"] == "/descenso"
+
+
+def test_descenso_una_sola_vez_en_el_sitemap(cli):
+    assert cli.get("/sitemap.xml").text.count("/descenso</loc>") == 1

@@ -95,11 +95,12 @@
         <th>PJ</th>
         <th>Rest.</th>
         <th class="points-head">{{ 'Prom' if promedio else 'PTS' }}</th>
+        <th class="estado">Estado</th>
       </tr>
     </thead>
     <tbody>
       {% for f in d.filas %}
-        <tr class="{{ 'descenso' if f.descenso or f.descenso_promedio}}{{ ' empate' if f.empate_descenso }}">
+        <tr class="{{ 'descenso' if f.descenso }}{{ ' empate' if f.empate_descenso }}">
           <td class="pos rank">{{ f.pos }}</td>
           <td class="t team-cell">{{ escudo(f.equipo, f.abrev, f.slug) }}</td>
           <td>{{ f.pj }}</td>

@@ -39,14 +39,14 @@ Filosofía: **datos confiables + herramientas útiles + experiencia rápida + co
 ## 3. Layout y URLs
 
 ### Portada
-1. Título · 2. "Liga Profesional" · 3. Mi club (si hay uno elegido) · 4. Selector: Clausura / Apertura / Anual / Promedios / Playoffs · 5. Tabla (por zona A/B en Clausura y Apertura; cuadro en Playoffs) · 6. Fixture (por fecha, con refresco cada 30 s si hay un partido en juego) · 7. Goleadores y asistidores.
+1. Título · 2. "Liga Profesional" · 3. Mi club (si hay uno elegido) · 4. Selector: Clausura / Apertura / Anual / Promedios / Descenso / Playoffs · 5. Tabla (por zona A/B en Clausura y Apertura; cuadro en Playoffs) · 6. Fixture (por fecha, con refresco cada 30 s si hay un partido en juego) · 7. Goleadores y asistidores.
 
 ### URLs actuales
 ```
 /                          portada (Clausura)
-/torneo/apertura  /torneo/anual  /torneo/promedios  /torneo/playoffs
+/torneo/apertura  /torneo/anual  /torneo/promedios  /torneo/descenso  /torneo/playoffs
 /club/<slug>               ej. /club/river
-/descenso                  Anual y Promedios: margen, restantes y estado matemático
+/descenso                  es "pestaña del selector (Anual y Promedios: margen, restantes, estado y puntos necesarios)
 /sitemap.xml  /robots.txt  /salud
 /parcial/...               fragmentos HTMX (no indexables): modo, fixture, playoffs, jugadores, club
 ```
@@ -161,7 +161,7 @@ Foro general, reputación, historial de cambios de datos (alcanza con `actualiza
 ## 9. Estructura del repo
 ```
 app/        main.py · core/ (config, db, templating)
-            modules/  portada.py · parcial.py (fragmentos HTMX) · seo.py · descenso_pagina.py
+            modules/  portada.py · parcial.py (fragmentos HTMX) · seo.py · contexto de la pestaña Descenso
                       torneo/ (queries, router, modos, playoffs, descenso, copas)
                       jugadores/ (queries, router)
                       club/ (queries, resumen [puro], router)

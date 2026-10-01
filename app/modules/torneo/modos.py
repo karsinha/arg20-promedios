@@ -7,7 +7,7 @@ from app.core import db
 
 ANIO = 2026
 ETIQUETAS = {"clausura": "Clausura", "apertura": "Apertura", "anual": "Anual", "promedios": "Promedios",
-             "playoffs": "Playoffs"}
+             "descenso": "Descenso", "playoffs": "Playoffs"}
 
 @dataclass(frozen=True)
 class Contexto:
@@ -33,5 +33,9 @@ def resolver(modo: str) -> Contexto:
 
 
 def url_modo(modo: str) -> str:
-    """URL publica de cada pestania. Clausura es la portada."""
-    return "/" if modo == "clausura" else f"/torneo/{modo}"
+    """URL publica de cada pestania. Clausura es la portada; Descenso conserva su URL propia."""
+    if modo == "clausura":
+        return "/"
+    if modo == "descenso":
+        return "/descenso"
+    return f"/torneo/{modo}"
