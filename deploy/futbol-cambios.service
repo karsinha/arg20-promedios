@@ -1,0 +1,8 @@
+[Unit]
+Description=Cambios de calendario BSD -> Postgres (Futbol Argentina)
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/futbol-argentina
+EnvironmentFile=%h/futbol-argentina/.env
+ExecStart=/usr/bin/flock -n /tmp/futbol-sync.lock %h/futbol-argentina/.venv/bin/python -m sync.cambios
