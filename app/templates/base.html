@@ -9,6 +9,17 @@
 
   <title>{% block titulo %}Fútbol Argentina · Liga Profesional{% endblock %}</title>
 
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("tema"); } catch (e) {}
+      if (t !== "dark" && t !== "light") {
+        t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -19,13 +30,30 @@
 
   <link rel="stylesheet" href="/static/css/app.css">
   <link rel="stylesheet" href="/static/css/crests.css">
+  <link rel="stylesheet" href="/static/css/theme.css">
 
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
 
 <body>
+  <button id="tema" class="tema-toggle" type="button" aria-label="Cambiar entre modo claro y oscuro"></button>
+
   <div class="wrap">
     {% block contenido %}{% endblock %}
   </div>
+
+  <script>
+    (function () {
+      var b = document.getElementById("tema"), r = document.documentElement;
+      function pintar() { b.textContent = r.getAttribute("data-theme") === "dark" ? "☀" : "☾"; }
+      b.addEventListener("click", function () {
+        var n = r.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        r.setAttribute("data-theme", n);
+        try { localStorage.setItem("tema", n); } catch (e) {}
+        pintar();
+      });
+      pintar();
+    })();
+  </script>
 </body>
 </html>

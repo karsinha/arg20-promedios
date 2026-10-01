@@ -1,0 +1,95 @@
+/* Modo oscuro. Se carga despues de app.css y solo redefine variables y colores fijos. */
+
+.tema-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+
+  display: grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+  padding: 0;
+
+  cursor: pointer;
+
+  border: 1px solid var(--line);
+  border-radius: 9px;
+
+  background: var(--card);
+  color: var(--mut);
+
+  font-size: 16px;
+  line-height: 1;
+}
+
+.tema-toggle:hover {
+  color: var(--tx);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0f1720;
+  --card: #17212d;
+  --card-soft: #1b2736;
+
+  --line: #2a3a4d;
+  --line-soft: #223142;
+
+  --tx: #e8eef5;
+  --mut: #93a4b8;
+  --mut-2: #6f8197;
+
+  --green: #3ddc97;
+  --green-soft: rgba(61, 220, 151, 0.12);
+  --green-line: rgba(61, 220, 151, 0.35);
+
+  --blue: #6aaeff;
+  --blue-soft: rgba(90, 169, 255, 0.12);
+  --blue-line: rgba(90, 169, 255, 0.32);
+
+  --violet: #a68bff;
+  --violet-soft: rgba(166, 139, 255, 0.12);
+  --violet-line: rgba(166, 139, 255, 0.32);
+
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 10px 28px rgba(0, 0, 0, 0.25);
+}
+
+/* Colores que app.css tiene fijos */
+:root[data-theme="dark"] body {
+  background: radial-gradient(circle at 50% -10%, #17212d 0%, var(--bg) 42%, #0b1118 100%);
+}
+
+:root[data-theme="dark"] .standings-table tbody tr:hover,
+:root[data-theme="dark"] .players-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .tabs button:hover {
+  border-color: #3a4d63;
+}
+
+:root[data-theme="dark"] .nav button {
+  background: transparent;
+}
+
+:root[data-theme="dark"] .nav button:hover {
+  background: var(--blue-soft);
+}
+
+:root[data-theme="dark"] .cr {
+  background: var(--line-soft);
+}
+
+:root[data-theme="dark"] .m i.vivo {
+  color: #ff7aa5;
+  border-color: rgba(255, 122, 165, 0.4);
+  background: rgba(255, 122, 165, 0.12);
+}
+
+:root[data-theme="dark"] .ov {
+  scrollbar-color: #3a4d63 transparent;
+}
