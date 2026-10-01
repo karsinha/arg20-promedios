@@ -55,3 +55,14 @@ a.tm:hover > span:last-child { text-decoration: underline; }
 @media (max-width: 640px) {
   .mi-club-body { grid-template-columns: 1fr; gap: 6px; }
 }
+
+/* Descenso */
+.standings-table th.estado, .standings-table td.estado { width: 26%; }
+.badge {
+  display: inline-block; padding: 2px 8px; border: 1px solid transparent; border-radius: 999px;
+  font-family: "Manrope", sans-serif; font-size: 10px; font-weight: 700; white-space: nowrap;
+}
+.badge-condenado { background: var(--red-soft); border-color: var(--red-line); color: var(--red); }
+.badge-salvado { background: var(--green-soft); border-color: var(--green-line); color: var(--green); }
+.leyenda a { color: var(--blue); font-weight: 700; text-decoration: none; }
+.leyenda a:hover { text-decoration: underline; }

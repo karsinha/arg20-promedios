@@ -83,3 +83,35 @@
   <span>{{ escudo(v.der.equipo, v.der.abrev, v.der.slug) }}</span>
 </div>
 {% endmacro %}
+
+
+{% macro tabla_descenso(d, promedio=false) %}
+<div class="ov">
+  <table class="standings-table">
+    <thead>
+      <tr>
+        <th class="pos">#</th>
+        <th class="team-head">Equipo</th>
+        <th>PJ</th>
+        <th>Rest.</th>
+        <th class="points-head">{{ 'Prom' if promedio else 'PTS' }}</th>
+        <th class="estado">Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in d.filas %}
+        <tr class="{{ 'descenso' if f.descenso }}{{ ' empate' if f.empate_descenso }}">
+          <td class="pos rank">{{ f.pos }}</td>
+          <td class="t team-cell">{{ escudo(f.equipo, f.abrev, f.slug) }}</td>
+          <td>{{ f.pj }}</td>
+          <td>{{ f.restantes }}</td>
+          <td class="points">{{ ('%.3f'|format(f.promedio)) if promedio else f.pts }}</td>
+          <td class="estado">{% if f.matematico == 'condenado' %}<span class="badge badge-condenado">Desciende</span>{% elif f.matematico == 'salvado' %}<span class="badge badge-salvado">Salvado</span>{% else %}—{% endif %}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6" class="vacio">Todavía no hay datos.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endmacro %}

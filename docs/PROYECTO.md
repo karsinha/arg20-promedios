@@ -28,10 +28,11 @@ Filosofía: **datos confiables + herramientas útiles + experiencia rápida + co
 - [x] Línea de clasificación (8.º puesto) en las tablas de zona.
 - [x] **Página de club** `/club/<slug>`: forma (últimos 5), posición en Clausura y Anual, local/visitante, próximo partido, últimos resultados, fixture completo y goleadores/asistidores del club. Slug corto por club (`equipo.slug`, migración 005); los escudos de tablas, fixture y playoffs linkean al club.
 - [x] **Mi club** sin cuentas (`localStorage`): botón en la página del club y tarjeta en la portada (`/parcial/club/<slug>`).
+- [x] **Página `/descenso`**: Anual y Promedios (fondo de cada tabla) con margen, partidos restantes y estado matemático (Salvado / Desciende, con desigualdades estrictas: un empate no define nada). Enlazada desde las leyendas de Anual y Promedios.
 
 ### Pendiente inmediato
 - [ ] Validar el resto de las tablas con `scripts/checks/cruce_tabla.py` (Clausura vs BSD; Anual vs CSV externo). Falta el desempate por goles a favor, que ningún caso real probó.
-- [ ] Página `/descenso` y después la calculadora.
+- [ ] Calculadora de descenso (qué necesita cada equipo para salvarse), sobre `/descenso`.
 - [ ] Open Graph con tarjeta de resultado (imagen).
 - [ ] Todo lo demás está en el Roadmap.
 
@@ -45,6 +46,7 @@ Filosofía: **datos confiables + herramientas útiles + experiencia rápida + co
 /                          portada (Clausura)
 /torneo/apertura  /torneo/anual  /torneo/promedios  /torneo/playoffs
 /club/<slug>               ej. /club/river
+/descenso                  Anual y Promedios: margen, restantes y estado matemático
 /sitemap.xml  /robots.txt  /salud
 /parcial/...               fragmentos HTMX (no indexables): modo, fixture, playoffs, jugadores, club
 ```
@@ -55,7 +57,7 @@ Redirecciones 301: `/?modo=xxx` → `/torneo/xxx` y `/torneo/clausura` → `/`.
 /fecha/14                  fixture de una fecha (resumen de la fecha)
 /partido/<slug>            ej. river-racing-2026-14
 /goleadores  /asistidores
-/descenso  /simulador
+/simulador
 /historial/<anio>
 ```
 
@@ -77,7 +79,7 @@ Redirecciones 301: `/?modo=xxx` → `/torneo/xxx` y `/torneo/clausura` → `/`.
 
 ### Tablas y reglas
 - **Playoffs:** `torneo/playoffs.py` arma el cuadro con una función pura. Proyectado con las posiciones actuales mientras no haya octavos cargados; real (con resultados y penales) cuando existen partidos `playoff`.
-- **Descenso:** `torneo/descenso.py` (puro) marca el último de Anual y Promedios y avisa si hay empate en la zona.
+- **Descenso:** `torneo/descenso.py` (puro) marca el último de Anual y Promedios, avisa si hay empate en la zona y calcula el estado matemático (`cotas_pts`, `cotas_promedio`, `estados`) con fracciones exactas. Los partidos restantes salen de `partido` (`queries.partidos_restantes`), sin llamadas nuevas a BSD.
 - **Copas:** `torneo/copas.py` (puro) asigna Libertadores y Sudamericana desde la Anual. El esquema de cupos **no está confirmado** (ver Pendientes).
 - El orden de las tablas es pts, dg, gf: solo de presentación. Un empate en puntos en zona de descenso se define por partido de desempate.
 
@@ -97,7 +99,7 @@ Criterio: lo que hace volver a diario es **mi club + el partido de hoy + qué se
 
 ### Fase A · Ahora (sale de datos que ya están en la base)
 1. Open Graph con tarjeta de resultado.
-2. **Descenso:** página `/descenso` y después la calculadora. La marca en Anual y Promedios ya está.
+2. **Calculadora de descenso** sobre `/descenso` (la página, la marca en Anual y Promedios y el estado matemático ya están).
 3. Validar tablas con `cruce_tabla.py`.
 
 ### Fase B · Después (lo que diferencia al producto)
@@ -158,11 +160,11 @@ Foro general, reputación, historial de cambios de datos (alcanza con `actualiza
 ## 9. Estructura del repo
 ```
 app/        main.py · core/ (config, db, templating)
-            modules/  portada.py · parcial.py (fragmentos HTMX) · seo.py
+            modules/  portada.py · parcial.py (fragmentos HTMX) · seo.py · descenso_pagina.py
                       torneo/ (queries, router, modos, playoffs, descenso, copas)
                       jugadores/ (queries, router)
                       club/ (queries, resumen [puro], router)
-            templates/ (base, home, club, macros, partials/)
+            templates/ (base, home, club, descenso, macros, partials/)
             static/    css/ (app, crests, club, theme) · js/mi_club.js · crests/
 sync/       sync_bsd.py · live.py · cambios.py
 db/         schema.sql · migrations/ (001 vistas jugadores, 002 stats_intentos, 003 penales,
@@ -171,7 +173,7 @@ deploy/     futbol-sync.service/.timer · futbol-cambios.service/.timer · futbo
 scripts/    probe_bsd.py · equipos_abreviaturas.py · optimizar_escudos.py · migrar_estructura.sh
             checks/ (cruce_tabla, check_eventos, check2, check3)
 crests_raw/ originales de escudos (no se sube al repo)
-tests/      test_app · test_club · test_copas · test_cruce · test_descenso · test_playoffs · test_sync_reglas
+tests/      test_app · test_club · test_copas · test_cruce · test_descenso · test_descenso_pagina · test_playoffs · test_sync_reglas
 docs/       PROYECTO.md · maqueta/home.html
 compose.yaml · Makefile · requirements.txt · .env.example
 ```

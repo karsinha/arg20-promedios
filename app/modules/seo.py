@@ -31,7 +31,7 @@ def datos_seo(modo: str) -> dict:
 
 @router.get("/sitemap.xml")
 def sitemap():
-    rutas = [modos.url_modo(m) for m in modos.ETIQUETAS] + [f"/club/{s}" for s in club.slugs()]
+    rutas = [modos.url_modo(m) for m in modos.ETIQUETAS] + ["/descenso"] + [f"/club/{s}" for s in club.slugs()]
     urls = "".join(f"<url><loc>{url_absoluta(r)}</loc></url>" for r in rutas)
     xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
            f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>')
@@ -49,3 +49,10 @@ def datos_seo_club(equipo: dict) -> dict:
             "descripcion": (f"{nombre} en la Liga Profesional Argentina {modos.ANIO}: próximo partido, últimos "
                             "resultados, forma, fixture completo, posición y goleadores."),
             "url": url_absoluta(f"/club/{equipo['slug']}")}
+
+
+def datos_seo_descenso() -> dict:
+    return {"titulo": f"Descenso {modos.ANIO} · Tabla Anual y Promedios · Liga Profesional Argentina",
+            "descripcion": (f"Quién se salva y quién baja en {modos.ANIO}: zona de descenso de la Anual y los "
+                            "Promedios, partidos que faltan y situación matemática de cada equipo."),
+            "url": url_absoluta("/descenso")}

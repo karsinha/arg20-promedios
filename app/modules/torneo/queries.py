@@ -84,3 +84,18 @@ def ultima_actualizacion():
     filas = db.consultar(
         """SELECT MAX(actualizado_en) AT TIME ZONE 'America/Argentina/Buenos_Aires' AS ultima FROM partido""")
     return filas[0]["ultima"] if filas else None
+
+def partidos_restantes(anio: int) -> dict[str, int]:
+    """Partidos de zona que le faltan a cada equipo en la temporada, por abreviatura.
+    Cuenta todo lo no finalizado (programado, en juego, postergado, suspendido) salvo el original ya reprogramado."""
+    filas = db.consultar(
+        """SELECT COALESCE(e.abreviatura, UPPER(LEFT(e.nombre, 3))) AS abrev, COUNT(*) AS restantes
+           FROM (SELECT p.local_id AS equipo_id, p.torneo_id FROM partido p
+                 WHERE p.fase = 'zona' AND p.estado <> 'finalizado' AND NOT p.reprogramado
+                 UNION ALL
+                 SELECT p.visitante_id, p.torneo_id FROM partido p
+                 WHERE p.fase = 'zona' AND p.estado <> 'finalizado' AND NOT p.reprogramado) r
+           JOIN torneo t ON t.id = r.torneo_id JOIN temporada te ON te.id = t.temporada_id
+           JOIN equipo e ON e.id = r.equipo_id
+           WHERE te.anio = %s GROUP BY 1""", (anio,))
+    return {f["abrev"]: int(f["restantes"]) for f in filas}
